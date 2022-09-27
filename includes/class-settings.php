@@ -14,9 +14,10 @@ final class Expire_User_Passwords_Settings {
 	 */
 	public function __construct() {
 
-		add_action( 'admin_menu',        array( $this, 'submenu_page' ) );
-		add_action( 'admin_init',        array( $this, 'init' ) );
-		add_filter( 'admin_footer_text', array( $this, 'admin_footer_text' ) );
+		add_action( 'admin_menu',          array( $this, 'submenu_page' ) );
+		add_action( 'admin_init',          array( $this, 'init' ) );
+		add_filter( 'admin_footer_text',   array( $this, 'admin_footer_text' ) );
+		add_filter( 'plugin_action_links', array( $this, 'plugin_link' ), 10, 2 );
 
     }
 
@@ -36,6 +37,28 @@ final class Expire_User_Passwords_Settings {
 			array( $this, 'render_submenu_page' )
 		);
 
+	}
+
+	/**
+	 * Add a settings link to the plugin on the plugin page
+	 *
+	 * @action plugin_action_links
+	 *
+	 * @param string[] $actions     An array of plugin action links. By default this can include 'activate', 'delete', 'network_only', ....
+	 * @param string   $plugin_file Path to the plugin file relative to the plugins directory.
+	 *
+	 * @return string[]
+	 */
+	public function plugin_link( array $actions, string $plugin_file ): array {
+		if ( $plugin_file !== EXPIRE_USER_PASSWORDS_PLUGIN ) {
+			return $actions; // wrong plugin.
+		}
+
+		$href          = admin_url( 'users.php?page=Expire_User_passwords' );
+		$settings_link = '<a href="' . $href . '">' . __( 'Settings' ) . '</a>'; // phpcs:ignore WordPress.WP.I18n.MissingArgDomain
+		array_unshift( $actions, $settings_link );
+
+		return $actions;
 	}
 
 	/**
@@ -98,6 +121,13 @@ final class Expire_User_Passwords_Settings {
 			'user_expass_settings_field_roles',
 			esc_html__( 'For users in these roles', 'expire-user-passwords' ),
 			array( $this, 'render_field_roles' ),
+			'user_expass_settings_page',
+			'user_expass_settings_page_section'
+		);
+        add_settings_field(
+			'user_expass_settings_field_email',
+			esc_html__( 'Reset via email', 'expire-user-passwords' ),
+			array( $this, 'render_field_email' ),
 			'user_expass_settings_page',
 			'user_expass_settings_page_section'
 		);
@@ -164,6 +194,29 @@ final class Expire_User_Passwords_Settings {
 	}
 
 	/**
+	 * Content for the roles setting field.
+	 *
+	 * @see $this->init()
+	 */
+	public function render_field_email() {
+		$options    = (array) get_option( 'user_expass_settings', array() );
+		$send_email = '1';
+		if ( isset( $options['send_email'] ) ) {
+			$send_email = $options['send_email'];
+		}
+
+		echo '<p><label>';
+		echo '<input type="radio" name="user_expass_settings[send_email]" id="user_expass_settings[send_email]" value="1"' . checked( $send_email, '1', false ) . '>';
+		echo __( 'Send an email with the password reset link.', 'expire-user-passwords' );
+		echo '</label></p>';
+
+		echo '<p><label>';
+		echo '<input type="radio" name="user_expass_settings[send_email]" id="user_expass_settings[send_email]" value="0"' . checked( $send_email, '0', false ) . '>';
+		echo __( 'Reset password directly on the login screen.', 'expire-user-passwords' );
+		echo '</label></p>';
+	}
+
+	/**
 	 * Plugin review call-to-action text for the admin footer.
 	 *
 	 * @filter admin_footer_text
@@ -183,7 +236,7 @@ final class Expire_User_Passwords_Settings {
 		}
 
 		return sprintf(
-			__( 'Do you like the %1$s plugin? Please consider %2$s on %3$s', 'user-expire-passwords' ),
+			__( 'Do you like the %1$s plugin? Please consider %2$s on %3$s', 'expire-user-passwords' ),
 			esc_html__( 'Expire User Passwords', 'expire-user-passwords' ),
 			sprintf(
 				'<a href="%s" target="_blank">%s</a>',

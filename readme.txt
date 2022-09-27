@@ -1,8 +1,8 @@
 === Expire User Passwords ===
-Contributors:      fjarrett, millermedianow, millermediadev
+Contributors:      fjarrett, millermedianow, millermediadev, janwoostendorp
 Tags:              admin, login, membership, passwords, profile, security, users
 Requires at least: 4.0
-Tested up to:      5.9
+Tested up to:      6.0.1
 Stable tag:        1.2
 License:           GPL-2.0
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -26,6 +26,7 @@ In the plugin settings you can set the maximum number of days users are allowed 
 * English
 * Czech
 * Español
+* Dutch
 
 **Development of this plugin is done [on GitHub](https://github.com/Miller-Media/expire-passwords). Pull requests welcome. Please see [issues reported](https://github.com/Miller-Media/expire-passwords/issues) there before going to the plugin forum.**
 

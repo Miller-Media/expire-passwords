@@ -99,6 +99,7 @@ final class Expire_User_Passwords_List_Table {
 
 		}
 
+		// translators: X amount of time ago
 		$time_diff = sprintf( __( '%1$s ago', 'expire-user-passwords' ), human_time_diff( $reset, time() ) );
 		$class     = Expire_User_Passwords::is_expired( $user_id ) ? 'user_expass-is-expired' : 'user-expass-not-expired';
 

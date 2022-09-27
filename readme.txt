@@ -1,9 +1,9 @@
 === Expire User Passwords ===
-Contributors:      fjarrett, millermedianow, millermediadev, janwoostendorp
+Contributors:      fjarrett, millermedianow, millermediadev
 Tags:              admin, login, membership, passwords, profile, security, users
 Requires at least: 4.0
 Tested up to:      6.0.1
-Stable tag:        1.2
+Stable tag:        1.3
 License:           GPL-2.0
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,7 +26,6 @@ In the plugin settings you can set the maximum number of days users are allowed 
 * English
 * Czech
 * Español
-* Dutch
 
 **Development of this plugin is done [on GitHub](https://github.com/Miller-Media/expire-passwords). Pull requests welcome. Please see [issues reported](https://github.com/Miller-Media/expire-passwords/issues) there before going to the plugin forum.**
 
@@ -37,6 +36,13 @@ In the plugin settings you can set the maximum number of days users are allowed 
 3. Users are not permitted to use the same password two times in a row during reset.
 
 == Changelog ==
+
+= 1.3 - September 27, 2022 =
+
+* Added ability for users to reset their expired password from the login screen
+* Added Dutch translation
+
+Props [@janwoostendorp](https://github.com/janwoostendorp)
 
 = 1.2 - May 4, 2022 =
 

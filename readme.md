@@ -4,11 +4,11 @@
 ![Banner](assets/banner-1544x500.png)
 Require certain users to change their passwords on a regular basis.
 
-**Contributors:** [fjarrett](https://profiles.wordpress.org/fjarrett), [millermedianow](https://profiles.wordpress.org/millermedianow), [millermediadev](https://profiles.wordpress.org/millermediadev)  
+**Contributors:** [fjarrett](https://profiles.wordpress.org/fjarrett), [millermedianow](https://profiles.wordpress.org/millermedianow), [millermediadev](https://profiles.wordpress.org/millermediadev), [janwoostendorp](https://profiles.wordpress.org/janwoostendorp)  
 **Tags:** [admin](https://wordpress.org/plugins/tags/admin), [login](https://wordpress.org/plugins/tags/login), [membership](https://wordpress.org/plugins/tags/membership), [passwords](https://wordpress.org/plugins/tags/passwords), [profile](https://wordpress.org/plugins/tags/profile), [security](https://wordpress.org/plugins/tags/security), [users](https://wordpress.org/plugins/tags/users)  
 **Requires at least:** 4.0  
-**Tested up to:** 5.6
-**Stable tag:** 1.1.2
+**Tested up to:** 5.6  
+**Stable tag:** 1.3  
 **License:** [GPL-2.0](https://www.gnu.org/licenses/gpl-2.0.html)  
 
 [![Build Status](https://travis-ci.org/fjarrett/expire-passwords.svg?branch=master)](https://travis-ci.org/fjarrett/expire-passwords) 
@@ -30,6 +30,7 @@ In the plugin settings you can set the maximum number of days users are allowed 
 * English
 * Czech
 * Español
+* Dutch
 
 **Development of this plugin is done [on GitHub](https://github.com/Miller-Media/expire-passwords). Pull requests welcome. Please see [issues reported](https://github.com/Miller-Media/expire-passwords/issues) there before going to the plugin forum.**
 
@@ -48,6 +49,15 @@ In the plugin settings you can set the maximum number of days users are allowed 
 ![Users are not permitted to use the same password two times in a row during reset.](assets/screenshot-3.png)
 
 ## Changelog ##
+
+### 1.3 - September 27, 2022 ###
+* Added ability for users to reset their expired password from the login screen
+* Added Dutch translation
+
+Props [@janwoostendorp](https://github.com/janwoostendorp)
+
+### 1.2 - May 4, 2022 ###
+* Added 'eup_submenu_access' filter for greater control to access of plugin settings
 
 ### 1.1.0 - February 15, 2020 ###
 * Fix: Updated namespace issues that caused critical errors when installing

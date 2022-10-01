@@ -145,7 +145,7 @@ final class Expire_User_Passwords_Login_Screen {
                     'expire-user-passwords'
                 ),
                 $limit
-            ),
+            )
         );
 
         if ( 'lostpassword' !== $action || 'expired' !== $status ) {

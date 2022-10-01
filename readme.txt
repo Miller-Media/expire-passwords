@@ -37,6 +37,10 @@ In the plugin settings you can set the maximum number of days users are allowed 
 
 == Changelog ==
 
+= 1.3.1 - September 30, 2022 =
+
+* Support for PHP 7.2 and older
+
 = 1.3 - September 27, 2022 =
 
 * Added ability for users to reset their expired password from the login screen

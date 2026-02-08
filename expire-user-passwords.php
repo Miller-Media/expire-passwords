@@ -9,6 +9,8 @@
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: expire-user-passwords
  * Domain Path: /languages
+ * Requires PHP: 8.1
+ * Tested up to: 6.9
  *
  * This plugin, like WordPress, is licensed under the GPL.
  * Use it to make something cool, have fun, and share what you've learned with others.

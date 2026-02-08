@@ -129,9 +129,9 @@ final class Expire_User_Passwords_Login_Screen {
 	 */
     public function lost_password_message( $message ) {
 
-        $action = filter_input( INPUT_GET, 'action', FILTER_SANITIZE_STRING );
-        $status = filter_input( INPUT_GET, 'user-expass', FILTER_SANITIZE_STRING );
-        $fp = filter_input( INPUT_GET, 'fp', FILTER_SANITIZE_STRING );
+        $action = sanitize_text_field( wp_unslash( $_GET['action'] ?? '' ) );
+        $status = sanitize_text_field( wp_unslash( $_GET['user-expass'] ?? '' ) );
+        $fp = sanitize_text_field( wp_unslash( $_GET['fp'] ?? '' ) );
 
         $limit = Expire_User_Passwords::get_limit();
 

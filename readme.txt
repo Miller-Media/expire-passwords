@@ -3,7 +3,7 @@ Contributors:      fjarrett, millermedianow, millermediadev
 Tags:              admin, login, membership, passwords, profile, security, users
 Requires at least: 4.0
 Tested up to:      6.9
-Stable tag:        1.3.1
+Stable tag:        1.3.2
 Requires PHP:      8.1
 License:           GPL-2.0
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -37,6 +37,10 @@ In the plugin settings you can set the maximum number of days users are allowed 
 3. Users are not permitted to use the same password two times in a row during reset.
 
 == Changelog ==
+
+= 1.3.2 =
+* Compatibility updates for WordPress 6.9 and PHP 8.1+
+* Replaced deprecated FILTER_SANITIZE_STRING usage
 
 = 1.3.1 - September 30, 2022 =
 

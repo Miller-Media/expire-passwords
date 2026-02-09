@@ -125,6 +125,7 @@ final class Expire_User_Passwords {
 
 		new Expire_User_Passwords_List_Table;
 		new Expire_User_Passwords_Settings;
+		new ReviewNotice( 'Expire User Passwords', 'expire-user-passwords', 'expass_activated_on', 'expire-user-passwords', EXPIRE_USER_PASSWORDS_URL . 'assets/icon-256x256.png' );
 
 	}
 

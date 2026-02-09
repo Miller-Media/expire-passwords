@@ -16,7 +16,6 @@ final class Expire_User_Passwords_Settings {
 
 		add_action( 'admin_menu',          array( $this, 'submenu_page' ) );
 		add_action( 'admin_init',          array( $this, 'init' ) );
-		add_filter( 'admin_footer_text',   array( $this, 'admin_footer_text' ) );
 		add_filter( 'plugin_action_links', array( $this, 'plugin_link' ), 10, 2 );
 
     }
@@ -216,38 +215,4 @@ final class Expire_User_Passwords_Settings {
 		echo '</label></p>';
 	}
 
-	/**
-	 * Plugin review call-to-action text for the admin footer.
-	 *
-	 * @filter admin_footer_text
-	 *
-	 * @param  string $text
-	 *
-	 * @return string
-	 */
-	public function admin_footer_text( $text ) {
-
-		$screen = get_current_screen();
-
-		if ( ! isset( $screen->id ) || 'users_page_Expire_User_passwords' !== $screen->id ) {
-
-			return $text;
-
-		}
-
-		return sprintf(
-			__( 'Do you like the %1$s plugin? Please consider %2$s on %3$s', 'expire-user-passwords' ),
-			esc_html__( 'Expire User Passwords', 'expire-user-passwords' ),
-			sprintf(
-				'<a href="%s" target="_blank">%s</a>',
-				esc_url( 'https://wordpress.org/support/view/plugin-reviews/expire-user-passwords#postform' ),
-				__( 'leaving a &#9733;&#9733;&#9733;&#9733;&#9733; review', 'expire-user-passwords' )
-			),
-			sprintf(
-				'<a href="%s" target="_blank">WordPress.org</a>',
-				esc_url( 'https://wordpress.org/plugins/expire-user-passwords/' )
-			)
-		);
-
-	}
 }

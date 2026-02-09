@@ -112,7 +112,7 @@ final class Expire_User_Passwords_Login_Screen {
 
 		if ( $is_same ) {
 
-			$errors->add( 'password_already_used', esc_html__( 'You cannot reuse your old password.' ) );
+			$errors->add( 'password_already_used', esc_html__( 'You cannot reuse your old password.', 'expire-user-passwords' ) );
 
 		}
 

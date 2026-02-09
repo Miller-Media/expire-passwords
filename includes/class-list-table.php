@@ -64,7 +64,7 @@ final class Expire_User_Passwords_List_Table {
 	 */
 	public function users_column( $columns ) {
 
-		$columns['user-expass'] = esc_html__( 'Password Reset', 'user-expire-passwords' );
+		$columns['user-expass'] = esc_html__( 'Password Reset', 'expire-user-passwords' );
 
 		return $columns;
 

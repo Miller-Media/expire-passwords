@@ -3,7 +3,7 @@ Contributors:      fjarrett, millermedianow, millermediadev
 Tags:              admin, login, membership, passwords, profile, security, users
 Requires at least: 4.0
 Tested up to:      6.9
-Stable tag:        1.3.2
+Stable tag:        1.3.3
 Requires PHP:      8.1
 License:           GPL-2.0
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -30,6 +30,20 @@ In the plugin settings you can set the maximum number of days users are allowed 
 
 **Development of this plugin is done [on GitHub](https://github.com/Miller-Media/expire-passwords). Pull requests welcome. Please see [issues reported](https://github.com/Miller-Media/expire-passwords/issues) there before going to the plugin forum.**
 
+== Frequently Asked Questions ==
+
+= What happens to existing users when I first install the plugin? =
+
+Existing users are **not** immediately expired. The plugin tracks each user's last password reset date. Users who have never reset their password have no recorded date, so they are treated as not expired. The expiration clock only starts once a user registers or resets their password after the plugin is active.
+
+= How can I hide the settings page from certain roles? =
+
+The plugin provides a `eup_submenu_access` filter to control which capability is required to see the settings page. By default it requires `manage_options`. To restrict it to only administrators, add this to your theme's `functions.php`:
+
+`add_filter( 'eup_submenu_access', function() { return 'manage_network'; } );`
+
+Or use any capability that only your desired role has. This is useful when custom roles have `manage_options` for other purposes but should not access the Expire User Passwords settings.
+
 == Screenshots ==
 
 1. Configure which user roles should be required to regularly reset their passwords and how often.
@@ -37,6 +51,9 @@ In the plugin settings you can set the maximum number of days users are allowed 
 3. Users are not permitted to use the same password two times in a row during reset.
 
 == Changelog ==
+
+= 1.3.3 =
+* Added FAQ section documenting first-install behavior and settings page access control
 
 = 1.3.2 =
 * Compatibility updates for WordPress 6.9 and PHP 8.1+

@@ -3,7 +3,7 @@ Contributors:      fjarrett, millermedianow, millermediadev
 Tags:              admin, login, membership, passwords, profile, security, users
 Requires at least: 4.0
 Tested up to:      6.9
-Stable tag:        1.3.4
+Stable tag:        1.3.5
 Requires PHP:      8.1
 License:           GPL-2.0
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -51,6 +51,10 @@ Or use any capability that only your desired role has. This is useful when custo
 3. Users are not permitted to use the same password two times in a row during reset.
 
 == Changelog ==
+
+= 1.3.5 =
+* Added dismissible review prompt notice after 14 days of usage
+* Removed non-dismissible footer review prompt from settings page
 
 = 1.3.4 =
 * Added translations for Spanish, French, German, Portuguese (Brazilian), and Italian

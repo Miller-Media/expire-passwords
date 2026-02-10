@@ -3,7 +3,7 @@ Contributors:      fjarrett, millermedianow, millermediadev
 Tags:              admin, login, membership, passwords, profile, security, users
 Requires at least: 4.0
 Tested up to:      6.9.1
-Stable tag:        1.3.6
+Stable tag:        1.3.7
 Requires PHP:      8.1
 License:           GPL-2.0
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -51,6 +51,9 @@ Or use any capability that only your desired role has. This is useful when custo
 3. Users are not permitted to use the same password two times in a row during reset.
 
 == Changelog ==
+
+= 1.3.7 =
+* Added Japanese (ja) translation
 
 = 1.3.6 =
 * Tested up to WordPress 6.9.1

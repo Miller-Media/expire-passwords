@@ -52,6 +52,9 @@ Or use any capability that only your desired role has. This is useful when custo
 
 == Changelog ==
 
+= 1.3.8 =
+* Added Chinese Simplified (zh_CN) translation
+
 = 1.3.7 =
 * Added Japanese (ja) translation
 

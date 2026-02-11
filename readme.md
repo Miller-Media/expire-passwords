@@ -34,6 +34,10 @@ In the plugin settings you can set the maximum number of days users are allowed 
 
 **Development of this plugin is done [on GitHub](https://github.com/Miller-Media/expire-passwords). Pull requests welcome. Please see [issues reported](https://github.com/Miller-Media/expire-passwords/issues) there before going to the plugin forum.**
 
+## Support Development
+
+[![Buy me a coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/yOd1JU9MQe)
+
 ## Screenshots ##
 
 ### Configure which user roles should be required to regularly reset their passwords and how often.

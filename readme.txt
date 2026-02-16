@@ -71,6 +71,26 @@ The plugin provides a `eup_submenu_access` filter to control which capability is
 
 Or use any capability that only your desired role has. This is useful when custom roles have `manage_options` for other purposes but should not access the Expire User Passwords settings.
 
+= What is the default password expiration period? =
+
+The default is 90 days. You can change this in Settings > Expire Passwords to any value between 1 and 365 days.
+
+= Which user roles are affected by default? =
+
+By default, all non-Administrator roles are required to reset their passwords. You can customize which roles are affected in the plugin settings.
+
+= Can users reuse their old password? =
+
+No. When a user's password expires and they are prompted to reset it, they cannot use the same password they had before.
+
+= What PHP and WordPress versions are supported? =
+
+The plugin requires PHP 8.1 or higher and has been tested up to WordPress 6.9.1. It requires WordPress 4.0 at minimum.
+
+= What languages are supported? =
+
+The plugin is available in 30 languages with more being added regularly. We are working toward supporting 50 languages total!
+
 == Screenshots ==
 
 1. Configure which user roles should be required to regularly reset their passwords and how often.

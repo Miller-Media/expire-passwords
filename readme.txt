@@ -91,59 +91,25 @@ The plugin provides a `eup_submenu_access` filter to control which capability is
 
 Or use any capability that only your desired role has. This is useful when custom roles have `manage_options` for other purposes but should not access the Expire User Passwords settings.
 
-== Localizations ==
-This plugin is available in the following languages:
+= What is the default password expiration period? =
 
-* Albanian (Shqip)
-* Arabic (العربية)
-* Armenian (Հայերեն)
-* Basque (Euskara)
-* Bengali (বাংলা)
-* Bulgarian (Български)
-* Catalan (Català)
-* Chinese Simplified (简体中文)
-* Croatian (Hrvatski)
-* Czech (Čeština)
-* Danish (Dansk)
-* Dutch (Nederlands)
-* Estonian (Eesti)
-* Finnish (Suomi)
-* French (Français)
-* Galician (Galego)
-* Georgian (ქართული)
-* German (Deutsch)
-* Greek (Ελληνικά)
-* Hebrew (עברית)
-* Hindi (हिन्दी)
-* Hungarian (Magyar)
-* Indonesian (Bahasa Indonesia)
-* Irish (Gaeilge)
-* Italian (Italiano)
-* Japanese (日本語)
-* Korean (한국어)
-* Latvian (Latviešu)
-* Lithuanian (Lietuvių)
-* Macedonian (Македонски)
-* Norwegian (Norsk)
-* Persian (فارسی)
-* Persian - Afghanistan (دری)
-* Polish (Polski)
-* Portuguese - Brazil (Português do Brasil)
-* Portuguese - Portugal (Português)
-* Romanian (Română)
-* Russian (Русский)
-* Serbian (Српски)
-* Slovak (Slovenčina)
-* Slovenian (Slovenščina)
-* Spanish (Español)
-* Swedish (Svenska)
-* Tamil (தமிழ்)
-* Thai (ไทย)
-* Turkish (Türkçe)
-* Ukrainian (Українська)
-* Urdu (اردو)
-* Vietnamese (Tiếng Việt)
-* Welsh (Cymraeg)
+The default is 90 days. You can change this in Settings > Expire Passwords to any value between 1 and 365 days.
+
+= Which user roles are affected by default? =
+
+By default, all non-Administrator roles are required to reset their passwords. You can customize which roles are affected in the plugin settings.
+
+= Can users reuse their old password? =
+
+No. When a user's password expires and they are prompted to reset it, they cannot use the same password they had before.
+
+= What PHP and WordPress versions are supported? =
+
+The plugin requires PHP 8.1 or higher and has been tested up to WordPress 6.9.1. It requires WordPress 4.0 at minimum.
+
+= What languages are supported? =
+
+The plugin is available in 50 languages!
 
 == Screenshots ==
 

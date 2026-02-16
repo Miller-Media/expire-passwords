@@ -24,36 +24,56 @@ In the plugin settings you can set the maximum number of days users are allowed 
 
 **Languages supported:**
 
+* Albanian (Shqip)
 * Arabic (العربية)
+* Armenian (Հայերեն)
+* Basque (Euskara)
+* Bengali (বাংলা)
 * Bulgarian (Български)
+* Catalan (Català)
 * Chinese Simplified (简体中文)
 * Croatian (Hrvatski)
 * Czech (Čeština)
 * Danish (Dansk)
 * Dutch (Nederlands)
+* Estonian (Eesti)
 * Finnish (Suomi)
 * French (Français)
+* Galician (Galego)
+* Georgian (ქართული)
 * German (Deutsch)
 * Greek (Ελληνικά)
 * Hebrew (עברית)
+* Hindi (हिन्दी)
 * Hungarian (Magyar)
 * Indonesian (Bahasa Indonesia)
+* Irish (Gaeilge)
 * Italian (Italiano)
 * Japanese (日本語)
 * Korean (한국어)
+* Latvian (Latviešu)
 * Lithuanian (Lietuvių)
+* Macedonian (Македонски)
 * Norwegian (Norsk)
+* Persian (فارسی)
+* Persian - Afghanistan (دری)
 * Polish (Polski)
 * Portuguese - Brazil (Português do Brasil)
+* Portuguese - Portugal (Português)
 * Romanian (Română)
 * Russian (Русский)
+* Serbian (Српски)
 * Slovak (Slovenčina)
 * Slovenian (Slovenščina)
 * Spanish (Español)
 * Swedish (Svenska)
+* Tamil (தமிழ்)
 * Thai (ไทย)
 * Turkish (Türkçe)
+* Ukrainian (Українська)
+* Urdu (اردو)
 * Vietnamese (Tiếng Việt)
+* Welsh (Cymraeg)
 
 **Development of this plugin is done [on GitHub](https://github.com/Miller-Media/expire-passwords). Pull requests welcome. Please see [issues reported](https://github.com/Miller-Media/expire-passwords/issues) there before going to the plugin forum.**
 
@@ -89,7 +109,7 @@ The plugin requires PHP 8.1 or higher and has been tested up to WordPress 6.9.1.
 
 = What languages are supported? =
 
-The plugin is available in 30 languages with more being added regularly. We are working toward supporting 50 languages total!
+The plugin is available in 50 languages!
 
 == Screenshots ==
 

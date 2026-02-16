@@ -131,6 +131,14 @@ final class Expire_User_Passwords_Settings {
 			'user_expass_settings_page_section'
 		);
 
+		add_settings_field(
+			'user_expass_settings_field_delete_data',
+			esc_html__( 'Remove all plugin data when deleted', 'expire-user-passwords' ),
+			array( $this, 'render_field_delete_data' ),
+			'user_expass_settings_page',
+			'user_expass_settings_page_section'
+		);
+
 	}
 
 	/**
@@ -213,6 +221,20 @@ final class Expire_User_Passwords_Settings {
 		echo '<input type="radio" name="user_expass_settings[send_email]" id="user_expass_settings[send_email]" value="0"' . checked( $send_email, '0', false ) . '>';
 		echo __( 'Reset password directly on the login screen.', 'expire-user-passwords' );
 		echo '</label></p>';
+	}
+
+	/**
+	 * Content for the delete data on uninstall setting field.
+	 */
+	public function render_field_delete_data() {
+		$options      = (array) get_option( 'user_expass_settings', array() );
+		$delete_data  = ! empty( $options['delete_data_on_uninstall'] ) ? 1 : 0;
+
+		printf(
+			'<p><label><input type="checkbox" name="user_expass_settings[delete_data_on_uninstall]" value="1" %s> %s</label></p>',
+			checked( $delete_data, 1, false ),
+			esc_html__( 'Check this box if you want all plugin settings and data to be removed when the plugin is deleted.', 'expire-user-passwords' )
+		);
 	}
 
 }

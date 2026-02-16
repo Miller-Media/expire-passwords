@@ -3,7 +3,7 @@ Contributors:      fjarrett, millermedianow, millermediadev
 Tags:              passwords, security, login, users, membership
 Requires at least: 4.0
 Tested up to:      6.9.1
-Stable tag:        1.3.9
+Stable tag: 1.4.0
 Requires PHP:      8.1
 License:           GPL-2.0
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -118,6 +118,13 @@ The plugin is available in 50 languages!
 3. Users are not permitted to use the same password two times in a row during reset.
 
 == Changelog ==
+
+= 1.4.0 =
+* Added translations for 50 languages
+* Added POT translation template file
+* Updated FAQ section
+* Updated readme with complete language list
+
 
 = 1.3.9 =
 * Added translations for Russian, Polish, Dutch, Turkish, and Swedish

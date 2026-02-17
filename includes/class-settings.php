@@ -98,7 +98,10 @@ final class Expire_User_Passwords_Settings {
 
 		register_setting(
 			'user_expass_settings_page',
-			'user_expass_settings'
+			'user_expass_settings',
+			array(
+				'sanitize_callback' => array( $this, 'sanitize_settings' ),
+			)
 		);
 
 		add_settings_section(
@@ -139,6 +142,29 @@ final class Expire_User_Passwords_Settings {
 			'user_expass_settings_page_section'
 		);
 
+	}
+
+	/**
+	 * Sanitize settings values before saving.
+	 *
+	 * @param array $input Raw input values.
+	 * @return array Sanitized values.
+	 */
+	public function sanitize_settings( $input ) {
+		$sanitized = array();
+		if ( isset( $input['limit'] ) ) {
+			$sanitized['limit'] = absint( $input['limit'] );
+		}
+		if ( isset( $input['roles'] ) && is_array( $input['roles'] ) ) {
+			$sanitized['roles'] = array_map( 'absint', $input['roles'] );
+		}
+		if ( isset( $input['send_email'] ) ) {
+			$sanitized['send_email'] = sanitize_text_field( $input['send_email'] );
+		}
+		if ( isset( $input['delete_data_on_uninstall'] ) ) {
+			$sanitized['delete_data_on_uninstall'] = absint( $input['delete_data_on_uninstall'] );
+		}
+		return $sanitized;
 	}
 
 	/**

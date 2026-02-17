@@ -2,8 +2,8 @@
 Contributors:      fjarrett, millermedianow, millermediadev
 Tags:              passwords, security, login, users, membership
 Requires at least: 4.0
-Tested up to:      6.9.1
-Stable tag: 1.4.1
+Tested up to:      6.9
+Stable tag: 1.4.2
 Requires PHP:      8.1
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -118,6 +118,12 @@ The plugin is available in 50 languages!
 3. Users are not permitted to use the same password two times in a row during reset.
 
 == Changelog ==
+
+= 1.4.2 =
+* Added sanitization callback to register_setting()
+* Added translators comment and fixed singular placeholder in _n() call
+* Removed .gitmodules and .travis.yml from plugin directory
+* Updated "Tested up to" to 6.9
 
 = 1.4.1 =
 * Added GPL license declaration to plugin header

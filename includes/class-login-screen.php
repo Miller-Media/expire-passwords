@@ -138,8 +138,9 @@ final class Expire_User_Passwords_Login_Screen {
         $eup_message = sprintf(
             '<p id="login_error">%s</p>',
             sprintf(
+                /* translators: %d: number of days before password expires */
                 _n(
-                    'Your password must be reset every day.',
+                    'Your password must be reset every %d day.',
                     'Your password must be reset every %d days.',
                     $limit,
                     'expire-user-passwords'

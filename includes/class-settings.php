@@ -214,12 +214,12 @@ final class Expire_User_Passwords_Settings {
 
 		echo '<p><label>';
 		echo '<input type="radio" name="user_expass_settings[send_email]" id="user_expass_settings[send_email]" value="1"' . checked( $send_email, '1', false ) . '>';
-		echo __( 'Send an email with the password reset link.', 'expire-user-passwords' );
+		echo esc_html__( 'Send an email with the password reset link.', 'expire-user-passwords' );
 		echo '</label></p>';
 
 		echo '<p><label>';
 		echo '<input type="radio" name="user_expass_settings[send_email]" id="user_expass_settings[send_email]" value="0"' . checked( $send_email, '0', false ) . '>';
-		echo __( 'Reset password directly on the login screen.', 'expire-user-passwords' );
+		echo esc_html__( 'Reset password directly on the login screen.', 'expire-user-passwords' );
 		echo '</label></p>';
 	}
 

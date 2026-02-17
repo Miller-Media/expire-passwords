@@ -3,9 +3,9 @@ Contributors:      fjarrett, millermedianow, millermediadev
 Tags:              passwords, security, login, users, membership
 Requires at least: 4.0
 Tested up to:      6.9.1
-Stable tag: 1.4.0
+Stable tag: 1.4.1
 Requires PHP:      8.1
-License:           GPL-2.0
+License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
 Require certain users to change their passwords on a regular basis.
@@ -118,6 +118,13 @@ The plugin is available in 50 languages!
 3. Users are not permitted to use the same password two times in a row during reset.
 
 == Changelog ==
+
+= 1.4.1 =
+* Added GPL license declaration to plugin header
+* Updated Author URI
+* Added direct file access protection to all PHP files
+* Improved output escaping and input sanitization
+* Removed non-production files from plugin directory
 
 = 1.4.0 =
 * Added translations for 50 languages

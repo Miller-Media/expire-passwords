@@ -2,10 +2,10 @@
 /**
  * Plugin Name: Expire User Passwords
  * Description: Require certain users to change their passwords on a regular basis.
- * Version:           1.4.0
+ * Version:           1.4.1
  * Author: Miller Media
- * Author URI: https://www.millermedia.io
- * License: GPL-2.0
+ * Author URI: https://mattmiller.ai
+ * License: GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: expire-user-passwords
  * Domain Path: /languages
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 }
 
-define( 'EXPIRE_USER_PASSWORDS_VERSION', '1.4.0' );
+define( 'EXPIRE_USER_PASSWORDS_VERSION', '1.4.1' );
 define( 'EXPIRE_USER_PASSWORDS_PLUGIN', plugin_basename( __FILE__ ) );
 define( 'EXPIRE_USER_PASSWORDS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'EXPIRE_USER_PASSWORDS_URL', plugin_dir_url( __FILE__ ) );
@@ -125,7 +125,7 @@ final class Expire_User_Passwords {
 
 		new Expire_User_Passwords_List_Table;
 		new Expire_User_Passwords_Settings;
-		new ReviewNotice( 'Expire User Passwords', 'expire-user-passwords', 'expass_activated_on', 'expire-user-passwords', EXPIRE_USER_PASSWORDS_URL . 'assets/icon-256x256.png' );
+		new ReviewNotice( 'Expire User Passwords', 'expire-user-passwords', 'expass_activated_on', 'expire-user-passwords', EXPIRE_USER_PASSWORDS_URL . 'assets/plugin-icon.png' );
 
 	}
 

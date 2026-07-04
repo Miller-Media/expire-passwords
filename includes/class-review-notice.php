@@ -1,8 +1,10 @@
 <?php
 /**
- * Review Notice class
+ * Review Notice class.
  *
  * Displays a dismissible admin notice after 14 days of usage requesting a review.
+ *
+ * @package Expire-User-Passwords
  */
 
 namespace MillerMedia\ExpireUserPasswords;
@@ -11,55 +13,124 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Review notice handler.
+ */
 class ReviewNotice {
 
+	/**
+	 * Plugin name.
+	 *
+	 * @var string
+	 */
 	private $plugin_name;
+
+	/**
+	 * Plugin slug.
+	 *
+	 * @var string
+	 */
 	private $plugin_slug;
+
+	/**
+	 * Activation option name.
+	 *
+	 * @var string
+	 */
 	private $activation_option;
+
+	/**
+	 * Dismissed meta key.
+	 *
+	 * @var string
+	 */
 	private $dismissed_meta_key;
+
+	/**
+	 * Review URL.
+	 *
+	 * @var string
+	 */
 	private $review_url;
+
+	/**
+	 * Text domain.
+	 *
+	 * @var string
+	 */
 	private $text_domain;
+
+	/**
+	 * Icon URL.
+	 *
+	 * @var string
+	 */
 	private $icon_url;
+
+	/**
+	 * Icon dashicon.
+	 *
+	 * @var string
+	 */
 	private $icon_dashicon;
 
+	/**
+	 * Constructor.
+	 *
+	 * @param string $plugin_name       Plugin name.
+	 * @param string $plugin_slug       Plugin slug.
+	 * @param string $activation_option Activation option name.
+	 * @param string $text_domain       Text domain.
+	 * @param string $icon_url          Icon URL.
+	 * @param string $icon_dashicon     Icon dashicon class.
+	 */
 	public function __construct( $plugin_name, $plugin_slug, $activation_option, $text_domain, $icon_url = '', $icon_dashicon = '' ) {
-		$this->plugin_name = $plugin_name;
-		$this->plugin_slug = $plugin_slug;
-		$this->activation_option = $activation_option;
+		$this->plugin_name        = $plugin_name;
+		$this->plugin_slug        = $plugin_slug;
+		$this->activation_option  = $activation_option;
 		$this->dismissed_meta_key = $plugin_slug . '_review_dismissed';
-		$this->review_url = 'https://wordpress.org/support/plugin/' . $plugin_slug . '/reviews/#new-post';
-		$this->text_domain = $text_domain;
-		$this->icon_url = $icon_url;
-		$this->icon_dashicon = $icon_dashicon;
+		$this->review_url         = 'https://wordpress.org/support/plugin/' . $plugin_slug . '/reviews/#new-post';
+		$this->text_domain        = $text_domain;
+		$this->icon_url           = $icon_url;
+		$this->icon_dashicon      = $icon_dashicon;
 
 		add_action( 'admin_notices', array( $this, 'show_review_notice' ) );
 		add_action( 'admin_init', array( $this, 'handle_dismiss' ) );
 	}
 
+	/**
+	 * Show the review notice.
+	 *
+	 * @action admin_notices
+	 */
 	public function show_review_notice() {
-		// Only show to admins
+		// Only show to admins.
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 
-		// Check if already dismissed
+		// Check if already dismissed.
 		if ( get_user_meta( get_current_user_id(), $this->dismissed_meta_key, true ) ) {
 			return;
 		}
 
-		// Check activation time
+		// Check activation time.
 		$activated = get_option( $this->activation_option );
 		if ( ! $activated ) {
 			return;
 		}
 
-		// Show after 14 days
+		/*
+		 * Show after 14 days
+		 */
 		$days_active = ( time() - $activated ) / DAY_IN_SECONDS;
 		if ( $days_active < 14 ) {
 			return;
 		}
 
-		// Output the notice
+		/*
+		 * Output the notice.
+		 */
 		?>
 		<div class="notice notice-info is-dismissible" id="<?php echo esc_attr( $this->plugin_slug ); ?>-review-notice" style="display: flex; align-items: center; padding: 12px;">
 			<?php if ( $this->icon_url ) : ?>
@@ -101,18 +172,30 @@ class ReviewNotice {
 		<?php
 	}
 
+	/**
+	 * Handle URL parameter dismiss.
+	 *
+	 * @action admin_init
+	 */
 	public function handle_dismiss() {
-		// Handle URL parameter dismiss
+		/*
+		 * Handle URL parameter dismiss
+		 */
 		if ( isset( $_GET[ $this->plugin_slug . '_dismiss_review' ] ) ) {
 			update_user_meta( get_current_user_id(), $this->dismissed_meta_key, true );
 			wp_safe_redirect( remove_query_arg( $this->plugin_slug . '_dismiss_review' ) );
 			exit;
 		}
 
-		// Handle AJAX dismiss
+		/*
+		 * Handle AJAX dismiss
+		 */
 		add_action( 'wp_ajax_' . $this->plugin_slug . '_dismiss_review_notice', array( $this, 'ajax_dismiss' ) );
 	}
 
+	/**
+	 * Handle AJAX dismiss.
+	 */
 	public function ajax_dismiss() {
 		update_user_meta( get_current_user_id(), $this->dismissed_meta_key, true );
 		wp_die();

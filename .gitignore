@@ -1,1 +1,13 @@
+# Editor files
 .idea
+.vscode
+
+# Build
+build/
+
+# Dependencies
+node_modules/
+vendor/
+
+# Tests
+tests/**/.cache

@@ -1,4 +1,10 @@
 <?php
+/**
+ * Settings page for Expire User Passwords.
+ *
+ * @package Expire-User-Passwords
+ */
+
 namespace MillerMedia\ExpireUserPasswords;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -7,6 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 }
 
+/**
+ * Settings page handler.
+ */
 final class Expire_User_Passwords_Settings {
 
 	/**
@@ -14,11 +23,12 @@ final class Expire_User_Passwords_Settings {
 	 */
 	public function __construct() {
 
-		add_action( 'admin_menu',          array( $this, 'submenu_page' ) );
-		add_action( 'admin_init',          array( $this, 'init' ) );
+		add_action( 'admin_menu', array( $this, 'submenu_page' ) );
+		add_action( 'admin_init', array( $this, 'init' ) );
+		add_action( 'admin_post_force_reset_all', array( $this, 'handle_force_reset_all' ) );
+		add_action( 'admin_notices', array( $this, 'admin_notices' ) );
 		add_filter( 'plugin_action_links', array( $this, 'plugin_link' ), 10, 2 );
-
-    }
+	}
 
 	/**
 	 * Add custom submenu page under the Users menu.
@@ -31,11 +41,10 @@ final class Expire_User_Passwords_Settings {
 			'users.php',
 			esc_html__( 'Expire User Passwords', 'expire-user-passwords' ),
 			esc_html__( 'Expire User Passwords', 'expire-user-passwords' ),
-            apply_filters( 'eup_submenu_access', 'manage_options' ),
+			apply_filters( 'eup_submenu_access', 'manage_options' ),
 			'Expire_User_passwords',
 			array( $this, 'render_submenu_page' )
 		);
-
 	}
 
 	/**
@@ -49,7 +58,7 @@ final class Expire_User_Passwords_Settings {
 	 * @return string[]
 	 */
 	public function plugin_link( array $actions, string $plugin_file ): array {
-		if ( $plugin_file !== EXPIRE_USER_PASSWORDS_PLUGIN ) {
+		if ( EXPIRE_USER_PASSWORDS_PLUGIN !== $plugin_file ) {
 			return $actions; // wrong plugin.
 		}
 
@@ -70,7 +79,7 @@ final class Expire_User_Passwords_Settings {
 		?>
 		<div class="wrap">
 
-			<h2><?php esc_html_e( 'Expire User Passwords', 'expire-user-passwords' ) ?></h2>
+			<h2><?php esc_html_e( 'Expire User Passwords', 'expire-user-passwords' ); ?></h2>
 
 			<form method="post" action="options.php">
 				<?php
@@ -86,7 +95,6 @@ final class Expire_User_Passwords_Settings {
 
 		</div>
 		<?php
-
 	}
 
 	/**
@@ -126,7 +134,24 @@ final class Expire_User_Passwords_Settings {
 			'user_expass_settings_page',
 			'user_expass_settings_page_section'
 		);
-        add_settings_field(
+
+		add_settings_field(
+			'user_expass_settings_field_start_date',
+			esc_html__( 'Start enforcing from date', 'expire-user-passwords' ),
+			array( $this, 'render_field_start_date' ),
+			'user_expass_settings_page',
+			'user_expass_settings_page_section'
+		);
+
+		add_settings_field(
+			'user_expass_settings_field_apply_to_all',
+			esc_html__( 'Apply start date to all users', 'expire-user-passwords' ),
+			array( $this, 'render_field_apply_to_all' ),
+			'user_expass_settings_page',
+			'user_expass_settings_page_section'
+		);
+
+		add_settings_field(
 			'user_expass_settings_field_email',
 			esc_html__( 'Reset via email', 'expire-user-passwords' ),
 			array( $this, 'render_field_email' ),
@@ -142,6 +167,13 @@ final class Expire_User_Passwords_Settings {
 			'user_expass_settings_page_section'
 		);
 
+		add_settings_field(
+			'user_expass_settings_field_force_reset',
+			esc_html__( 'Force Password Reset', 'expire-user-passwords' ),
+			array( $this, 'render_field_force_reset' ),
+			'user_expass_settings_page',
+			'user_expass_settings_page_section'
+		);
 	}
 
 	/**
@@ -164,6 +196,15 @@ final class Expire_User_Passwords_Settings {
 		if ( isset( $input['delete_data_on_uninstall'] ) ) {
 			$sanitized['delete_data_on_uninstall'] = absint( $input['delete_data_on_uninstall'] );
 		}
+		if ( isset( $input['start_date'] ) ) {
+			$date = sanitize_text_field( $input['start_date'] );
+			if ( ! empty( $date ) && strtotime( $date ) ) {
+				$sanitized['start_date'] = $date;
+			}
+		}
+		if ( isset( $input['apply_start_date_to_all'] ) ) {
+			$sanitized['apply_start_date_to_all'] = absint( $input['apply_start_date_to_all'] );
+		}
 		return $sanitized;
 	}
 
@@ -178,7 +219,6 @@ final class Expire_User_Passwords_Settings {
 			'<p>%s</p>',
 			esc_html__( 'Require certain users to change their passwords on a regular basis.', 'expire-user-passwords' )
 		);
-
 	}
 
 	/**
@@ -197,7 +237,6 @@ final class Expire_User_Passwords_Settings {
 			esc_attr( $value ),
 			esc_html__( 'days', 'expire-user-passwords' )
 		);
-
 	}
 
 	/**
@@ -223,7 +262,6 @@ final class Expire_User_Passwords_Settings {
 			);
 
 		}
-
 	}
 
 	/**
@@ -253,8 +291,8 @@ final class Expire_User_Passwords_Settings {
 	 * Content for the delete data on uninstall setting field.
 	 */
 	public function render_field_delete_data() {
-		$options      = (array) get_option( 'user_expass_settings', array() );
-		$delete_data  = ! empty( $options['delete_data_on_uninstall'] ) ? 1 : 0;
+		$options     = (array) get_option( 'user_expass_settings', array() );
+		$delete_data = ! empty( $options['delete_data_on_uninstall'] ) ? 1 : 0;
 
 		printf(
 			'<p><label><input type="checkbox" name="user_expass_settings[delete_data_on_uninstall]" value="1" %s> %s</label></p>',
@@ -263,4 +301,91 @@ final class Expire_User_Passwords_Settings {
 		);
 	}
 
+	/**
+	 * Content for the start date setting field.
+	 */
+	public function render_field_start_date() {
+		$options    = (array) get_option( 'user_expass_settings', array() );
+		$start_date = isset( $options['start_date'] ) ? $options['start_date'] : '';
+
+		printf(
+			'<input type="date" name="user_expass_settings[start_date]" value="%s">',
+			esc_attr( $start_date )
+		);
+		echo '<p class="description">' . esc_html__( 'Set a start date from which password age is calculated for users who have never reset their password.', 'expire-user-passwords' ) . '</p>';
+	}
+
+	/**
+	 * Content for the apply to all setting field.
+	 */
+	public function render_field_apply_to_all() {
+		$options      = (array) get_option( 'user_expass_settings', array() );
+		$apply_to_all = ! empty( $options['apply_start_date_to_all'] ) ? 1 : 0;
+
+		printf(
+			'<p><label><input type="checkbox" name="user_expass_settings[apply_start_date_to_all]" value="1" %s> %s</label></p>',
+			checked( $apply_to_all, 1, false ),
+			esc_html__( 'Apply the start date to all users, not just those who have never reset their password.', 'expire-user-passwords' )
+		);
+	}
+
+	/**
+	 * Render the force reset button field.
+	 */
+	public function render_field_force_reset() {
+		$url = wp_nonce_url(
+			admin_url( 'admin-post.php?action=force_reset_all' ),
+			'force_reset_all'
+		);
+
+		printf(
+			'<a href="%s" class="button button-secondary" onclick="return confirm(\'%s\');">%s</a>',
+			esc_url( $url ),
+			esc_attr__( 'Are you sure you want to force all users to reset their password?', 'expire-user-passwords' ),
+			esc_html__( 'Force Password Reset Now', 'expire-user-passwords' )
+		);
+		echo '<p class="description">' . esc_html__( 'Force all users in expirable roles to reset their password on next login.', 'expire-user-passwords' ) . '</p>';
+	}
+
+	/**
+	 * Handle the force reset all action.
+	 *
+	 * @action admin_post_force_reset_all
+	 */
+	public function handle_force_reset_all() {
+		check_admin_referer( 'force_reset_all' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'You do not have permission to perform this action.', 'expire-user-passwords' ) );
+		}
+
+		$roles = Expire_User_Passwords::get_roles();
+		$users = get_users( array( 'role__in' => $roles ) );
+
+		foreach ( $users as $user ) {
+			Expire_User_Passwords::force_password_reset( $user->ID );
+		}
+
+		wp_safe_redirect(
+			add_query_arg(
+				array(
+					'page'    => 'Expire_User_passwords',
+					'message' => 'force_reset_success',
+				),
+				admin_url( 'users.php' )
+			)
+		);
+		exit;
+	}
+
+	/**
+	 * Show admin notices.
+	 *
+	 * @action admin_notices
+	 */
+	public function admin_notices() {
+		if ( isset( $_GET['page'], $_GET['message'] ) && 'Expire_User_passwords' === $_GET['page'] && 'force_reset_success' === $_GET['message'] ) {
+			echo '<div class="notice notice-success is-dismissable"><p>' . esc_html__( 'Password reset has been forced for all users.', 'expire-user-passwords' ) . '</p></div>';
+		}
+	}
 }

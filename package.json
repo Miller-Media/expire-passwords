@@ -1,0 +1,25 @@
+{
+  "name": "expire-user-passwords",
+  "version": "1.4.2",
+  "description": "Require certain users to change their passwords on a regular basis.",
+  "author": "Miller Media",
+  "license": "GPL-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Miller-Media/expire-passwords"
+  },
+  "scripts": {
+    "start": "wp-env start",
+    "stop": "wp-env stop",
+    "destroy": "wp-env destroy",
+    "shell": "wp-env run cli /bin/bash",
+    "lint:php": "vendor/bin/phpcs --standard=phpcs.xml .",
+    "lint:php:fix": "vendor/bin/phpcbf --standard=phpcs.xml .",
+    "test:php": "vendor/bin/phpunit",
+    "bundle": "mkdir -p build && bunx bestzip build/expire-passwords.zip expire-user-passwords.php uninstall.php includes/ assets/"
+  },
+  "devDependencies": {
+    "@wordpress/env": "^11.10.0",
+    "bestzip": "^3.0.1"
+  }
+}

@@ -9,7 +9,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
-$options = (array) get_option( 'user_expass_settings', array() );
+$options     = (array) get_option( 'user_expass_settings', array() );
 $delete_data = ! empty( $options['delete_data_on_uninstall'] );
 
 if ( ! $delete_data ) {
@@ -22,5 +22,8 @@ delete_option( 'expass_activated_on' );
 
 // Clean up user meta.
 global $wpdb;
+
+// phpcs:disable WordPress.DB.DirectDatabaseQuery,WordPress.DB.SlowDBQuery
 $wpdb->delete( $wpdb->usermeta, array( 'meta_key' => 'user_expass_password_reset' ) );
 $wpdb->delete( $wpdb->usermeta, array( 'meta_key' => 'expire-user-passwords_review_dismissed' ) );
+// phpcs:enable WordPress.DB.DirectDatabaseQuery,WordPress.DB.SlowDBQuery

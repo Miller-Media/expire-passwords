@@ -1,4 +1,10 @@
 <?php
+/**
+ * Login screen handler for Expire User Passwords.
+ *
+ * @package Expire-User-Passwords
+ */
+
 namespace MillerMedia\ExpireUserPasswords;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -7,6 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 }
 
+/**
+ * Login screen handler.
+ */
 final class Expire_User_Passwords_Login_Screen {
 
 	/**
@@ -14,10 +23,9 @@ final class Expire_User_Passwords_Login_Screen {
 	 */
 	public function __construct() {
 
-		add_action( 'wp_login',                array( $this, 'wp_login' ), 10, 2 );
+		add_action( 'wp_login', array( $this, 'wp_login' ), 10, 2 );
 		add_action( 'validate_password_reset', array( $this, 'validate_password_reset' ), 10, 2 );
-		add_filter( 'login_message',           array( $this, 'lost_password_message' ) );
-
+		add_filter( 'login_message', array( $this, 'lost_password_message' ) );
 	}
 
 	/**
@@ -25,8 +33,8 @@ final class Expire_User_Passwords_Login_Screen {
 	 *
 	 * @action wp_login
 	 *
-	 * @param string   $user_login
-	 * @param \WP_User $user
+	 * @param string   $user_login User login.
+	 * @param \WP_User $user       User object.
 	 */
 	public function wp_login( $user_login, $user ) {
 
@@ -42,15 +50,16 @@ final class Expire_User_Passwords_Login_Screen {
 
 		}
 
-		$GLOBALS['current_user'] = $user; // Required to destroy sessions
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Required by wp_destroy_all_sessions().
+		$GLOBALS['current_user'] = $user;
 
 		wp_destroy_all_sessions();
 
-		if ($this->should_send_email()) {
+		if ( $this->should_send_email() ) {
 			wp_safe_redirect(
 				add_query_arg(
 					array(
-						'action' => 'lostpassword',
+						'action'      => 'lostpassword',
 						'user-expass' => 'expired',
 					),
 					wp_login_url()
@@ -66,9 +75,9 @@ final class Expire_User_Passwords_Login_Screen {
 				add_query_arg(
 					array(
 						'action' => 'rp',
-                        'fp' => 'eup',
-						'key' => $reset_key,
-						'login' => $user->user_login
+						'fp'     => 'eup',
+						'key'    => $reset_key,
+						'login'  => $user->user_login,
 					),
 					wp_login_url()
 				),
@@ -78,7 +87,6 @@ final class Expire_User_Passwords_Login_Screen {
 		}
 
 		exit;
-
 	}
 
 	/**
@@ -86,8 +94,8 @@ final class Expire_User_Passwords_Login_Screen {
 	 *
 	 * @action validate_password_reset
 	 *
-	 * @param \WP_Error $errors
-	 * @param \WP_User  $user
+	 * @param \WP_Error $errors Error object.
+	 * @param \WP_User  $user   User object.
 	 */
 	public function validate_password_reset( $errors, $user ) {
 
@@ -115,7 +123,6 @@ final class Expire_User_Passwords_Login_Screen {
 			$errors->add( 'password_already_used', esc_html__( 'You cannot reuse your old password.', 'expire-user-passwords' ) );
 
 		}
-
 	}
 
 	/**
@@ -123,45 +130,46 @@ final class Expire_User_Passwords_Login_Screen {
 	 *
 	 * @filter login_message
 	 *
-	 * @param  string $message
+	 * @param  string $message Current login message.
 	 *
 	 * @return string
 	 */
-    public function lost_password_message( $message ) {
+	public function lost_password_message( $message ) {
 
-        $action = sanitize_text_field( wp_unslash( $_GET['action'] ?? '' ) );
-        $status = sanitize_text_field( wp_unslash( $_GET['user-expass'] ?? '' ) );
-        $fp = sanitize_text_field( wp_unslash( $_GET['fp'] ?? '' ) );
+		$action = sanitize_text_field( wp_unslash( $_GET['action'] ?? '' ) );
+		$status = sanitize_text_field( wp_unslash( $_GET['user-expass'] ?? '' ) );
+		$fp     = sanitize_text_field( wp_unslash( $_GET['fp'] ?? '' ) );
 
-        $limit = Expire_User_Passwords::get_limit();
+		$limit = Expire_User_Passwords::get_limit();
 
-        $eup_message = sprintf(
-            '<p id="login_error">%s</p>',
-            sprintf(
-                /* translators: %d: number of days before password expires */
-                _n(
-                    'Your password must be reset every %d day.',
-                    'Your password must be reset every %d days.',
-                    $limit,
-                    'expire-user-passwords'
-                ),
-                $limit
-            )
-        );
+		$eup_message = sprintf(
+			'<p id="login_error">%s</p>',
+			sprintf(
+				/* translators: %d: number of days before password expires */
+				_n(
+					'Your password must be reset every %d day.',
+					'Your password must be reset every %d days.',
+					$limit,
+					'expire-user-passwords'
+				),
+				$limit
+			)
+		);
 
-        if ( 'lostpassword' !== $action || 'expired' !== $status ) {
-            if ($fp == 'eup') {
-                return $eup_message;
-            }
+		if ( 'lostpassword' !== $action || 'expired' !== $status ) {
+			if ( 'eup' === $fp ) {
+				return $eup_message;
+			}
 
-            return $message;
-        }
+			return $message;
+		}
 
-        return sprintf('%s<p>%s</p>',
-            $eup_message,
-            esc_html__( 'Please enter your username or e-mail below and a password reset link will be sent to you.', 'expire-user-passwords' )
-        );
-    }
+		return sprintf(
+			'%s<p>%s</p>',
+			$eup_message,
+			esc_html__( 'Please enter your username or e-mail below and a password reset link will be sent to you.', 'expire-user-passwords' )
+		);
+	}
 
 	/**
 	 * Check if the password reset email should be send.

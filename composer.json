@@ -1,0 +1,33 @@
+{
+    "name": "miller-media/expire-passwords",
+    "description": "Require certain users to change their passwords on a regular basis.",
+    "type": "wordpress-plugin",
+    "version": "1.4.2",
+    "license": "GPL-2",
+    "authors": [
+        {
+            "name": "Miller Media",
+            "homepage": "https://mattmiller.ai"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload-dev": {
+        "psr-4": {
+            "MillerMedia\\ExpireUserPasswords\\Tests\\": "tests/phpunit/"
+        }
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "*",
+        "wp-coding-standards/wpcs": "*",
+        "phpcompatibility/php-compatibility": "*",
+        "phpcompatibility/phpcompatibility-wp": "*",
+        "phpunit/phpunit": "^11.0",
+        "brain/monkey": "^2.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
+}

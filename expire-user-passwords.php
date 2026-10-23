@@ -9,6 +9,7 @@
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: expire-user-passwords
  * Domain Path: /languages
+ * Requires at least: 4.4
  * Requires PHP: 8.1
  * Tested up to: 7.1
  *

@@ -2,7 +2,7 @@
 Contributors:      fjarrett, millermedianow, millermediadev
 Tags: password-expiry, security, passwords, login, users
 Requires at least: 4.0
-Tested up to:      6.9
+Tested up to:      7.1
 Stable tag: 1.4.2
 Requires PHP:      8.1
 License:           GPL-2.0-or-later

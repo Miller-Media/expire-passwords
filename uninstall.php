@@ -9,7 +9,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
-$options = (array) get_option( 'user_expass_settings', array() );
+$options     = (array) get_option( 'user_expass_settings', array() );
 $delete_data = ! empty( $options['delete_data_on_uninstall'] );
 
 if ( ! $delete_data ) {

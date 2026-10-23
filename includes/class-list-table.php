@@ -14,10 +14,9 @@ final class Expire_User_Passwords_List_Table {
 	 */
 	public function __construct() {
 
-		add_action( 'admin_head',                 array( $this, 'admin_css' ) );
-		add_filter( 'manage_users_columns',       array( $this, 'users_column' ) );
+		add_action( 'admin_head', array( $this, 'admin_css' ) );
+		add_filter( 'manage_users_columns', array( $this, 'users_column' ) );
 		add_action( 'manage_users_custom_column', array( $this, 'render_users_column' ), 10, 3 );
-
 	}
 
 	/**
@@ -50,7 +49,6 @@ final class Expire_User_Passwords_List_Table {
 		}
 		</style>
 		<?php
-
 	}
 
 	/**
@@ -67,7 +65,6 @@ final class Expire_User_Passwords_List_Table {
 		$columns['user-expass'] = esc_html__( 'Password Reset', 'expire-user-passwords' );
 
 		return $columns;
-
 	}
 
 	/**
@@ -108,7 +105,5 @@ final class Expire_User_Passwords_List_Table {
 			esc_attr( $class ),
 			esc_html( $time_diff )
 		);
-
 	}
-
 }

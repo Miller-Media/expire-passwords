@@ -62,11 +62,9 @@ final class Expire_User_Passwords {
 				require_once $include;
 
 			}
-
 		}
 
 		add_action( 'init', array( $this, 'init' ) );
-
 	}
 
 	/**
@@ -83,7 +81,6 @@ final class Expire_User_Passwords {
 		}
 
 		return self::$instance;
-
 	}
 
 	/**
@@ -94,7 +91,6 @@ final class Expire_User_Passwords {
 	public static function i18n() {
 
 		load_plugin_textdomain( 'expire-user-passwords', false, EXPIRE_USER_PASSWORDS_LANG_PATH );
-
 	}
 
 	/**
@@ -112,11 +108,11 @@ final class Expire_User_Passwords {
 		 */
 		self::$default_limit = absint( apply_filters( 'user_expass_default_limit', 90 ) );
 
-		add_action( 'user_register',  array( __CLASS__, 'save_user_meta' ) );
+		add_action( 'user_register', array( __CLASS__, 'save_user_meta' ) );
 		add_action( 'password_reset', array( __CLASS__, 'save_user_meta' ) );
 		add_action( 'profile_update', array( __CLASS__, 'maybe_save_user_meta_on_profile_update' ), 10, 2 );
 
-		new Expire_User_Passwords_Login_Screen;
+		new Expire_User_Passwords_Login_Screen();
 
 		if ( ! is_user_logged_in() ) {
 
@@ -124,10 +120,9 @@ final class Expire_User_Passwords {
 
 		}
 
-		new Expire_User_Passwords_List_Table;
-		new Expire_User_Passwords_Settings;
+		new Expire_User_Passwords_List_Table();
+		new Expire_User_Passwords_Settings();
 		new ReviewNotice( 'Expire User Passwords', 'expire-user-passwords', 'expass_activated_on', 'expire-user-passwords', EXPIRE_USER_PASSWORDS_URL . 'assets/plugin-icon.png' );
-
 	}
 
 	/**
@@ -147,7 +142,6 @@ final class Expire_User_Passwords {
 		}
 
 		update_user_meta( $user_id, 'user_expass_password_reset', gmdate( 'U' ) );
-
 	}
 
 	/**
@@ -173,7 +167,6 @@ final class Expire_User_Passwords {
 		}
 
 		self::save_user_meta( $user_id );
-
 	}
 
 	/**
@@ -194,7 +187,6 @@ final class Expire_User_Passwords {
 		$value = get_user_meta( $user_id, 'user_expass_password_reset', true );
 
 		return ( $value ) ? absint( $value ) : false;
-
 	}
 
 	/**
@@ -211,7 +203,6 @@ final class Expire_User_Passwords {
 		$options = (array) get_option( 'user_expass_settings', array() );
 
 		return ( empty( $options['limit'] ) || absint( $options['limit'] ) > 365 ) ? self::$default_limit : absint( $options['limit'] );
-
 	}
 
 	/**
@@ -239,14 +230,13 @@ final class Expire_User_Passwords {
 
 		// Return all roles except admins by default if not set
 		return array_diff( $roles, array( 'administrator' ) );
-
 	}
 
 	/**
 	 * Return the password expiration date for a user.
 	 *
-	 * @param  mixed $user        (optional)
-	 * @param  string      $date_format (optional)
+	 * @param  mixed  $user        (optional)
+	 * @param  string $date_format (optional)
 	 *
 	 * @return string|false
 	 */
@@ -265,7 +255,6 @@ final class Expire_User_Passwords {
 		$expires = strtotime( sprintf( '@%d + %d days', $reset, self::get_limit() ) );
 
 		return gmdate( $date_format, $expires );
-
 	}
 
 	/**
@@ -287,7 +276,6 @@ final class Expire_User_Passwords {
 		$roles = array_intersect( $user->roles, self::get_roles() );
 
 		return empty( $user->roles[0] ) ? false : ! empty( $roles );
-
 	}
 
 	/**
@@ -300,7 +288,6 @@ final class Expire_User_Passwords {
 	public static function is_expired( $user = null ) {
 
 		return ( false === ( $expires = self::get_expiration( $user ) ) ) ? false : ( time() > $expires );
-
 	}
 
 	/**
@@ -314,20 +301,17 @@ final class Expire_User_Passwords {
 
 		switch ( true ) {
 
-			case is_numeric( $user ) :
-
+			case is_numeric( $user ):
 				$user_id = absint( $user );
 
 				break;
 
-			case is_a( $user, 'WP_User' ) :
-
+			case is_a( $user, 'WP_User' ):
 				$user_id = $user->ID;
 
 				break;
 
-			default :
-
+			default:
 				$user_id = get_current_user_id();
 
 		}
@@ -339,9 +323,7 @@ final class Expire_User_Passwords {
 		}
 
 		return $user_id;
-
 	}
-
 }
 
 Expire_User_Passwords::instance();

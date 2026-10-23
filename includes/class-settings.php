@@ -14,11 +14,10 @@ final class Expire_User_Passwords_Settings {
 	 */
 	public function __construct() {
 
-		add_action( 'admin_menu',          array( $this, 'submenu_page' ) );
-		add_action( 'admin_init',          array( $this, 'init' ) );
+		add_action( 'admin_menu', array( $this, 'submenu_page' ) );
+		add_action( 'admin_init', array( $this, 'init' ) );
 		add_filter( 'plugin_action_links', array( $this, 'plugin_link' ), 10, 2 );
-
-    }
+	}
 
 	/**
 	 * Add custom submenu page under the Users menu.
@@ -31,11 +30,10 @@ final class Expire_User_Passwords_Settings {
 			'users.php',
 			esc_html__( 'Expire User Passwords', 'expire-user-passwords' ),
 			esc_html__( 'Expire User Passwords', 'expire-user-passwords' ),
-            apply_filters( 'eup_submenu_access', 'manage_options' ),
+			apply_filters( 'eup_submenu_access', 'manage_options' ),
 			'Expire_User_passwords',
 			array( $this, 'render_submenu_page' )
 		);
-
 	}
 
 	/**
@@ -70,7 +68,7 @@ final class Expire_User_Passwords_Settings {
 		?>
 		<div class="wrap">
 
-			<h2><?php esc_html_e( 'Expire User Passwords', 'expire-user-passwords' ) ?></h2>
+			<h2><?php esc_html_e( 'Expire User Passwords', 'expire-user-passwords' ); ?></h2>
 
 			<form method="post" action="options.php">
 				<?php
@@ -86,7 +84,6 @@ final class Expire_User_Passwords_Settings {
 
 		</div>
 		<?php
-
 	}
 
 	/**
@@ -126,7 +123,7 @@ final class Expire_User_Passwords_Settings {
 			'user_expass_settings_page',
 			'user_expass_settings_page_section'
 		);
-        add_settings_field(
+		add_settings_field(
 			'user_expass_settings_field_email',
 			esc_html__( 'Reset via email', 'expire-user-passwords' ),
 			array( $this, 'render_field_email' ),
@@ -141,7 +138,6 @@ final class Expire_User_Passwords_Settings {
 			'user_expass_settings_page',
 			'user_expass_settings_page_section'
 		);
-
 	}
 
 	/**
@@ -178,7 +174,6 @@ final class Expire_User_Passwords_Settings {
 			'<p>%s</p>',
 			esc_html__( 'Require certain users to change their passwords on a regular basis.', 'expire-user-passwords' )
 		);
-
 	}
 
 	/**
@@ -197,7 +192,6 @@ final class Expire_User_Passwords_Settings {
 			esc_attr( $value ),
 			esc_html__( 'days', 'expire-user-passwords' )
 		);
-
 	}
 
 	/**
@@ -223,7 +217,6 @@ final class Expire_User_Passwords_Settings {
 			);
 
 		}
-
 	}
 
 	/**
@@ -253,8 +246,8 @@ final class Expire_User_Passwords_Settings {
 	 * Content for the delete data on uninstall setting field.
 	 */
 	public function render_field_delete_data() {
-		$options      = (array) get_option( 'user_expass_settings', array() );
-		$delete_data  = ! empty( $options['delete_data_on_uninstall'] ) ? 1 : 0;
+		$options     = (array) get_option( 'user_expass_settings', array() );
+		$delete_data = ! empty( $options['delete_data_on_uninstall'] ) ? 1 : 0;
 
 		printf(
 			'<p><label><input type="checkbox" name="user_expass_settings[delete_data_on_uninstall]" value="1" %s> %s</label></p>',
@@ -262,5 +255,4 @@ final class Expire_User_Passwords_Settings {
 			esc_html__( 'Check this box if you want all plugin settings and data to be removed when the plugin is deleted.', 'expire-user-passwords' )
 		);
 	}
-
 }

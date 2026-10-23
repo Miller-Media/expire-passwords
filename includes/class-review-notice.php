@@ -23,14 +23,14 @@ class ReviewNotice {
 	private $icon_dashicon;
 
 	public function __construct( $plugin_name, $plugin_slug, $activation_option, $text_domain, $icon_url = '', $icon_dashicon = '' ) {
-		$this->plugin_name = $plugin_name;
-		$this->plugin_slug = $plugin_slug;
-		$this->activation_option = $activation_option;
+		$this->plugin_name        = $plugin_name;
+		$this->plugin_slug        = $plugin_slug;
+		$this->activation_option  = $activation_option;
 		$this->dismissed_meta_key = $plugin_slug . '_review_dismissed';
-		$this->review_url = 'https://wordpress.org/support/plugin/' . $plugin_slug . '/reviews/#new-post';
-		$this->text_domain = $text_domain;
-		$this->icon_url = $icon_url;
-		$this->icon_dashicon = $icon_dashicon;
+		$this->review_url         = 'https://wordpress.org/support/plugin/' . $plugin_slug . '/reviews/#new-post';
+		$this->text_domain        = $text_domain;
+		$this->icon_url           = $icon_url;
+		$this->icon_dashicon      = $icon_dashicon;
 
 		add_action( 'admin_notices', array( $this, 'show_review_notice' ) );
 		add_action( 'admin_init', array( $this, 'handle_dismiss' ) );

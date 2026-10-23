@@ -126,9 +126,9 @@ final class Expire_User_Passwords_Login_Screen {
 	 */
 	public function lost_password_message( $message ) {
 
-		$action = sanitize_text_field( wp_unslash( $_GET['action'] ?? '' ) );
-		$status = sanitize_text_field( wp_unslash( $_GET['user-expass'] ?? '' ) );
-		$fp     = sanitize_text_field( wp_unslash( $_GET['fp'] ?? '' ) );
+		$action = sanitize_text_field( wp_unslash( $_GET['action'] ?? '' ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only display parameter, no state change.
+		$status = sanitize_text_field( wp_unslash( $_GET['user-expass'] ?? '' ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only display parameter, no state change.
+		$fp     = sanitize_text_field( wp_unslash( $_GET['fp'] ?? '' ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only display parameter, no state change.
 
 		$limit = Expire_User_Passwords::get_limit();
 

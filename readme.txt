@@ -122,7 +122,7 @@ The plugin is available in 50 languages!
 = 1.4.3 =
 * Fixed: administrators are now excluded from password expiration by default when no roles have been saved in the settings, as intended
 * Fixed: when an admin sets a new password for a user on the profile screen, the user's expiration clock now restarts
-* Hardened request handling: nonce and capability checks, input sanitization, prepared SQL and output escaping
+* Added nonce verification to the review notice dismiss action
 * Raised the minimum supported WordPress version to 4.4
 * Tested up to WordPress 7.1
 

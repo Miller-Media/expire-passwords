@@ -3,7 +3,7 @@ Contributors:      fjarrett, millermedianow, millermediadev
 Tags: password-expiry, security, passwords, login, users
 Requires at least: 4.0
 Tested up to:      7.1
-Stable tag: 1.4.2
+Stable tag: 1.4.3
 Requires PHP:      8.1
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -105,7 +105,7 @@ No. When a user's password expires and they are prompted to reset it, they canno
 
 = What PHP and WordPress versions are supported? =
 
-The plugin requires PHP 8.1 or higher and has been tested up to WordPress 6.9.1. It requires WordPress 4.0 at minimum.
+The plugin requires PHP 8.1 or higher and has been tested up to WordPress 7.1. It requires WordPress 4.0 at minimum.
 
 = What languages are supported? =
 
@@ -118,6 +118,11 @@ The plugin is available in 50 languages!
 3. Users are not permitted to use the same password two times in a row during reset.
 
 == Changelog ==
+
+= 1.4.3 =
+* Fixed: administrators are now excluded from password expiration by default when no roles have been saved in the settings, as intended
+* Fixed: when an admin sets a new password for a user on the profile screen, the user's expiration clock now restarts
+* Tested up to WordPress 7.1
 
 = 1.4.2 =
 * Added sanitization callback to register_setting()

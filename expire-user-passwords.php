@@ -143,6 +143,7 @@ final class Expire_User_Passwords {
 		}
 
 		update_user_meta( $user_id, 'user_expass_password_reset', gmdate( 'U' ) );
+		delete_user_meta( $user_id, 'user_expass_force_reset' );
 	}
 
 	/**
@@ -288,7 +289,90 @@ final class Expire_User_Passwords {
 	 */
 	public static function is_expired( $user = null ) {
 
+		if ( self::is_force_reset( $user ) ) {
+
+			return true;
+
+		}
+
 		return ( false === ( $expires = self::get_expiration( $user ) ) ) ? false : ( time() > $expires );
+	}
+
+	/**
+	 * Determine if an admin has forced a password reset for a user.
+	 *
+	 * @param  mixed $user (optional)
+	 *
+	 * @return bool
+	 */
+	public static function is_force_reset( $user = null ) {
+
+		$user_id = self::get_user_id( $user );
+
+		if ( false === $user_id || ! self::has_expirable_role( $user_id ) ) {
+
+			return false;
+
+		}
+
+		return (bool) get_user_meta( $user_id, 'user_expass_force_reset', true );
+	}
+
+	/**
+	 * Force a user to reset their password on their next login.
+	 *
+	 * Flags the user, signs them out everywhere and, when the
+	 * "Reset via email" setting is enabled, notifies them by email.
+	 *
+	 * @param  int $user_id The user ID.
+	 *
+	 * @return bool
+	 */
+	public static function force_password_reset( $user_id ) {
+
+		$user = get_userdata( $user_id );
+
+		if ( ! $user || ! self::has_expirable_role( $user ) ) {
+
+			return false;
+
+		}
+
+		update_user_meta( $user->ID, 'user_expass_force_reset', 1 );
+
+		\WP_Session_Tokens::get_instance( $user->ID )->destroy_all();
+
+		$options = (array) get_option( 'user_expass_settings', array() );
+
+		if ( ! isset( $options['send_email'] ) || '1' === $options['send_email'] ) {
+
+			self::send_force_reset_email( $user );
+
+		}
+
+		return true;
+	}
+
+	/**
+	 * Email a user to let them know a password reset was forced.
+	 *
+	 * @param \WP_User $user The user to notify.
+	 */
+	private static function send_force_reset_email( $user ) {
+
+		$site_name = wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES );
+
+		wp_mail(
+			$user->user_email,
+			/* translators: %s: site name */
+			sprintf( __( '[%s] Password reset required', 'expire-user-passwords' ), $site_name ),
+			sprintf(
+				/* translators: 1: site name, 2: login URL */
+				__( "An administrator of %1\$s requires you to reset your password.\n\nYou will be asked to choose a new password the next time you log in:\n%2\$s", 'expire-user-passwords' ),
+				$site_name,
+				wp_login_url()
+			)
+		);
 	}
 
 	/**

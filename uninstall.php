@@ -23,4 +23,5 @@ delete_option( 'expass_activated_on' );
 // Clean up user meta.
 global $wpdb;
 $wpdb->delete( $wpdb->usermeta, array( 'meta_key' => 'user_expass_password_reset' ) );
+$wpdb->delete( $wpdb->usermeta, array( 'meta_key' => 'user_expass_force_reset' ) );
 $wpdb->delete( $wpdb->usermeta, array( 'meta_key' => 'expire-user-passwords_review_dismissed' ) );

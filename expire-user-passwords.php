@@ -17,7 +17,10 @@
  * Use it to make something cool, have fun, and share what you've learned with others.
  *
  * Copyright © 2022 Miller Media. All Rights Reserved.
+ *
+ * @package Expire-User-Passwords
  */
+
 namespace MillerMedia\ExpireUserPasswords;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -33,6 +36,9 @@ define( 'EXPIRE_USER_PASSWORDS_URL', plugin_dir_url( __FILE__ ) );
 define( 'EXPIRE_USER_PASSWORDS_INC_DIR', EXPIRE_USER_PASSWORDS_DIR . 'includes/' );
 define( 'EXPIRE_USER_PASSWORDS_LANG_PATH', dirname( EXPIRE_USER_PASSWORDS_PLUGIN ) . '/languages' );
 
+/**
+ * Core plugin class for Expire User Passwords.
+ */
 final class Expire_User_Passwords {
 
 	/**
@@ -132,11 +138,13 @@ final class Expire_User_Passwords {
 	 * @action user_register
 	 * @action password_reset
 	 *
-	 * @param mixed $user (optional)
+	 * @param mixed $user (optional).
 	 */
 	public static function save_user_meta( $user = null ) {
 
-		if ( false === ( $user_id = self::get_user_id( $user ) ) ) {
+		$user_id = self::get_user_id( $user );
+
+		if ( false === $user_id ) {
 
 			return;
 
@@ -173,13 +181,15 @@ final class Expire_User_Passwords {
 	/**
 	 * Return password reset user meta from the database.
 	 *
-	 * @param  mixed $user (optional)
+	 * @param  mixed $user (optional).
 	 *
 	 * @return mixed|false
 	 */
 	public static function get_user_meta( $user = null ) {
 
-		if ( false === ( $user_id = self::get_user_id( $user ) ) ) {
+		$user_id = self::get_user_id( $user );
+
+		if ( false === $user_id ) {
 
 			return false;
 
@@ -229,25 +239,76 @@ final class Expire_User_Passwords {
 
 		$roles = array_keys( get_editable_roles() );
 
-		// Return all roles except admins by default if not set
+		// Return all roles except admins by default if not set.
 		return array_diff( $roles, array( 'administrator' ) );
+	}
+
+	/**
+	 * Return the effective reset date for a user.
+	 *
+	 * @param  mixed $user (optional).
+	 *
+	 * @return int|false
+	 */
+	public static function get_effective_reset_date( $user = null ) {
+
+		$user_id = self::get_user_id( $user );
+
+		if ( false === $user_id ) {
+
+			return false;
+
+		}
+
+		$options    = (array) get_option( 'user_expass_settings', array() );
+		$start_date = ! empty( $options['start_date'] ) ? $options['start_date'] : '';
+		$apply_all  = ! empty( $options['apply_start_date_to_all'] );
+
+		if ( empty( $start_date ) ) {
+
+			return self::get_user_meta( $user_id );
+
+		}
+
+		$start_timestamp = strtotime( $start_date );
+		$reset_timestamp = self::get_user_meta( $user_id );
+
+		if ( ! $reset_timestamp ) {
+
+			return $start_timestamp;
+
+		}
+
+		// Only use the Start Date when it is later than the user's own reset,
+		// so users who reset after the Start Date are measured from that reset.
+		if ( $apply_all ) {
+
+			return max( $reset_timestamp, $start_timestamp );
+
+		}
+
+		return $reset_timestamp;
 	}
 
 	/**
 	 * Return the password expiration date for a user.
 	 *
-	 * @param  mixed  $user        (optional)
-	 * @param  string $date_format (optional)
+	 * @param  mixed  $user        (optional).
+	 * @param  string $date_format (optional).
 	 *
 	 * @return string|false
 	 */
 	public static function get_expiration( $user = null, $date_format = 'U' ) {
 
-		if (
-			! self::has_expirable_role( $user )
-			||
-			false === ( $reset = self::get_user_meta( $user ) )
-		) {
+		if ( ! self::has_expirable_role( $user ) ) {
+
+			return false;
+
+		}
+
+		$reset = self::get_effective_reset_date( $user );
+
+		if ( false === $reset ) {
 
 			return false;
 
@@ -261,13 +322,15 @@ final class Expire_User_Passwords {
 	/**
 	 * Determine if a user belongs to an expirable role defined in the settings.
 	 *
-	 * @param  mixed $user (optional)
+	 * @param  mixed $user (optional).
 	 *
 	 * @return bool
 	 */
 	public static function has_expirable_role( $user = null ) {
 
-		if ( false === ( $user_id = self::get_user_id( $user ) ) ) {
+		$user_id = self::get_user_id( $user );
+
+		if ( false === $user_id ) {
 
 			return false;
 
@@ -282,19 +345,21 @@ final class Expire_User_Passwords {
 	/**
 	 * Determine if a user's password has exceeded the age limit.
 	 *
-	 * @param  mixed $user (optional)
+	 * @param  mixed $user (optional).
 	 *
 	 * @return bool
 	 */
 	public static function is_expired( $user = null ) {
 
-		return ( false === ( $expires = self::get_expiration( $user ) ) ) ? false : ( time() > $expires );
+		$expires = self::get_expiration( $user );
+
+		return ( false === $expires ) ? false : ( time() > $expires );
 	}
 
 	/**
 	 * Return the user ID for a give user.
 	 *
-	 * @param  mixed $user
+	 * @param  mixed $user User object.
 	 *
 	 * @return int|false
 	 */

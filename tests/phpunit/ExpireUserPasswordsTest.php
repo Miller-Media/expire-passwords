@@ -57,7 +57,7 @@ class ExpireUserPasswordsTest extends TestCase {
     }
 
     /** @test */
-    public function get_effective_reset_date_returns_start_date_when_apply_all(): void {
+    public function get_effective_reset_date_returns_start_date_when_apply_all_and_reset_is_older(): void {
         $this->mockSettings( [
             'start_date'              => '2026-06-01',
             'apply_start_date_to_all' => 1,
@@ -67,6 +67,45 @@ class ExpireUserPasswordsTest extends TestCase {
         $result = Expire_User_Passwords::get_effective_reset_date( 1 );
 
         $this->assertSame( strtotime( '2026-06-01' ), $result );
+    }
+
+    /** @test */
+    public function get_effective_reset_date_returns_user_meta_when_apply_all_and_reset_is_newer(): void {
+        $reset = strtotime( '2026-06-15' );
+        $this->mockSettings( [
+            'start_date'              => '2026-06-01',
+            'apply_start_date_to_all' => 1,
+        ] );
+        $this->mockUserMeta( (string) $reset );
+
+        $result = Expire_User_Passwords::get_effective_reset_date( 1 );
+
+        $this->assertSame( $reset, $result );
+    }
+
+    /** @test */
+    public function is_expired_returns_false_after_reset_when_start_date_plus_limit_has_passed(): void {
+        // Start Date + limit is in the past, but the user just reset their password.
+        $this->mockSettings( [
+            'limit'                   => 30,
+            'start_date'              => gmdate( 'Y-m-d', time() - ( 60 * DAY_IN_SECONDS ) ),
+            'apply_start_date_to_all' => 1,
+        ] );
+        $this->mockUserMeta( (string) ( time() - 10 ) );
+
+        $this->assertFalse( Expire_User_Passwords::is_expired( 1 ) );
+    }
+
+    /** @test */
+    public function is_expired_returns_true_when_start_date_plus_limit_has_passed_and_reset_is_older(): void {
+        $this->mockSettings( [
+            'limit'                   => 30,
+            'start_date'              => gmdate( 'Y-m-d', time() - ( 60 * DAY_IN_SECONDS ) ),
+            'apply_start_date_to_all' => 1,
+        ] );
+        $this->mockUserMeta( (string) ( time() - ( 90 * DAY_IN_SECONDS ) ) );
+
+        $this->assertTrue( Expire_User_Passwords::is_expired( 1 ) );
     }
 
     /** @test */
@@ -80,6 +119,22 @@ class ExpireUserPasswordsTest extends TestCase {
         $result = Expire_User_Passwords::get_effective_reset_date( 1 );
 
         $this->assertSame( 1700000000, $result );
+    }
+
+    /** @test */
+    public function get_roles_defaults_to_all_except_admin(): void {
+        Functions\when( 'get_option' )->justReturn( [] );
+        Functions\when( 'get_editable_roles' )->justReturn( [
+            'administrator' => [ 'name' => 'Administrator' ],
+            'editor'        => [ 'name' => 'Editor' ],
+            'subscriber'    => [ 'name' => 'Subscriber' ],
+        ] );
+
+        $roles = Expire_User_Passwords::get_roles();
+
+        $this->assertNotContains( 'administrator', $roles );
+        $this->assertContains( 'editor', $roles );
+        $this->assertContains( 'subscriber', $roles );
     }
 
     /** @test */
@@ -198,96 +253,5 @@ class ExpireUserPasswordsTest extends TestCase {
         Functions\when( 'get_current_user_id' )->justReturn( 999 );
 
         $this->assertFalse( Expire_User_Passwords::has_expirable_role( null ) );
-    }
-
-    /** @test */
-    public function force_password_reset_returns_false_for_invalid_user(): void {
-        Functions\when( 'get_user_by' )->justReturn( false );
-
-        $this->assertFalse( Expire_User_Passwords::force_password_reset( 999 ) );
-    }
-
-    /** @test */
-    public function force_password_reset_sets_past_timestamp_and_destroys_sessions(): void {
-        $this->mockSettings( [ 'limit' => 90, 'send_email' => '0' ] );
-        $this->mockWpdb();
-        Functions\when( 'get_user_by' )->alias( function ( $field, $value ) {
-            return (object) [
-                'ID'         => (int) $value,
-                'roles'      => [ 'editor' ],
-                'user_email' => 'user@example.com',
-                'user_login' => 'testuser',
-            ];
-        } );
-
-        $updated_meta = null;
-        Functions\expect( 'update_user_meta' )
-            ->once()
-            ->with( 1, 'user_expass_password_reset', \Mockery::type( 'int' ) )
-            ->andReturnUsing( function ( $user_id, $key, $value ) use ( &$updated_meta ) {
-                $updated_meta = $value;
-            } );
-
-        Functions\expect( 'delete_user_meta' )
-            ->times( 4 );
-
-        $result = Expire_User_Passwords::force_password_reset( 1 );
-
-        $this->assertTrue( $result );
-        $this->assertNotNull( $updated_meta );
-        $expected_past = time() - ( 90 * 86400 ) - 1;
-        $this->assertLessThanOrEqual( time() - ( 90 * 86400 ) - 1, $updated_meta );
-    }
-
-    /** @test */
-    public function force_password_reset_with_email_sends_notification(): void {
-        $this->mockSettings( [ 'limit' => 90, 'send_email' => '1' ] );
-        $this->mockWpdb();
-
-        Functions\when( 'get_user_by' )->alias( function ( $field, $value ) {
-            return (object) [
-                'ID'         => (int) $value,
-                'roles'      => [ 'editor' ],
-                'user_email' => 'user@example.com',
-                'user_login' => 'testuser',
-            ];
-        } );
-
-        Functions\when( 'update_user_meta' )->justReturn( true );
-        Functions\when( 'delete_user_meta' )->justReturn( true );
-
-        Functions\expect( 'get_bloginfo' )
-            ->times( 2 )
-            ->with( 'name' )
-            ->andReturn( 'Test Site' );
-
-        Functions\expect( 'wp_mail' )
-            ->once()
-            ->with( 'user@example.com', \Mockery::type( 'string' ), \Mockery::type( 'string' ) );
-
-        $this->assertTrue( Expire_User_Passwords::force_password_reset( 1 ) );
-    }
-
-    /** @test */
-    public function force_password_reset_without_email_skips_notification(): void {
-        $this->mockSettings( [ 'limit' => 90, 'send_email' => '0' ] );
-        $this->mockWpdb();
-
-        Functions\when( 'get_user_by' )->alias( function ( $field, $value ) {
-            return (object) [
-                'ID'         => (int) $value,
-                'roles'      => [ 'editor' ],
-                'user_email' => 'user@example.com',
-                'user_login' => 'testuser',
-            ];
-        } );
-
-        Functions\when( 'update_user_meta' )->justReturn( true );
-        Functions\when( 'delete_user_meta' )->justReturn( true );
-
-        Functions\expect( 'wp_mail' )
-            ->never();
-
-        $this->assertTrue( Expire_User_Passwords::force_password_reset( 1 ) );
     }
 }

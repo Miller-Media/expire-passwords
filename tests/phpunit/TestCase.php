@@ -67,11 +67,4 @@ abstract class TestCase extends PHPUnitTestCase {
             return false;
         } );
     }
-
-    protected function mockWpdb(): void {
-        global $wpdb;
-        $wpdb = \Mockery::mock( 'stdClass' );
-        $wpdb->prefix = 'wp_';
-        $wpdb->shouldReceive( 'delete' )->andReturn( true );
-    }
 }

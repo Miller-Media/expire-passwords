@@ -315,8 +315,7 @@ final class Expire_User_Passwords_Settings {
 		printf(
 			'<p><label><input type="checkbox" name="user_expass_settings[apply_start_date_to_all]" value="1" %s> %s</label></p>',
 			checked( $apply_to_all, 1, false ),
-			esc_html__( 'Apply the start date to all users, not just those who have never reset their password.', 'expire-user-passwords' )
+			esc_html__( 'Apply the start date to all users, not just those who have never reset their password. Users who reset their password after the start date are measured from their own reset.', 'expire-user-passwords' )
 		);
 	}
-
 }

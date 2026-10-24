@@ -270,17 +270,20 @@ final class Expire_User_Passwords {
 
 		}
 
+		$start_timestamp = strtotime( $start_date );
 		$reset_timestamp = self::get_user_meta( $user_id );
 
 		if ( ! $reset_timestamp ) {
 
-			return strtotime( $start_date );
+			return $start_timestamp;
 
 		}
 
+		// Only use the Start Date when it is later than the user's own reset,
+		// so users who reset after the Start Date are measured from that reset.
 		if ( $apply_all ) {
 
-			return strtotime( $start_date );
+			return max( $reset_timestamp, $start_timestamp );
 
 		}
 

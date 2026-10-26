@@ -1,10 +1,4 @@
 <?php
-/**
- * List table handler for Expire User Passwords.
- *
- * @package Expire-User-Passwords
- */
-
 namespace MillerMedia\ExpireUserPasswords;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,9 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 }
 
-/**
- * List table handler.
- */
 final class Expire_User_Passwords_List_Table {
 
 	/**
@@ -65,7 +56,7 @@ final class Expire_User_Passwords_List_Table {
 	 *
 	 * @filter manage_users_columns
 	 *
-	 * @param  array $columns Column definitions.
+	 * @param  array $columns
 	 *
 	 * @return array
 	 */
@@ -81,9 +72,9 @@ final class Expire_User_Passwords_List_Table {
 	 *
 	 * @action manage_users_custom_column
 	 *
-	 * @param  string $value       Current column value.
-	 * @param  string $column_name Column name.
-	 * @param  int    $user_id     User ID.
+	 * @param  string $value
+	 * @param  string $column_name
+	 * @param  int    $user_id
 	 *
 	 * @return string
 	 */
@@ -95,19 +86,17 @@ final class Expire_User_Passwords_List_Table {
 
 		}
 
-		$reset = Expire_User_Passwords::get_user_meta( $user_id );
-
 		if (
 			! Expire_User_Passwords::has_expirable_role( $user_id )
 			||
-			false === $reset
+			false === ( $reset = Expire_User_Passwords::get_user_meta( $user_id ) )
 		) {
 
 			return '&mdash;';
 
 		}
 
-		/* translators: %s: Time ago. */
+		// translators: X amount of time ago
 		$time_diff = sprintf( __( '%1$s ago', 'expire-user-passwords' ), human_time_diff( $reset, time() ) );
 		$class     = Expire_User_Passwords::is_expired( $user_id ) ? 'user_expass-is-expired' : 'user-expass-not-expired';
 

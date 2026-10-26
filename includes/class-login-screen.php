@@ -1,10 +1,4 @@
 <?php
-/**
- * Login screen handler for Expire User Passwords.
- *
- * @package Expire-User-Passwords
- */
-
 namespace MillerMedia\ExpireUserPasswords;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,9 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 }
 
-/**
- * Login screen handler.
- */
 final class Expire_User_Passwords_Login_Screen {
 
 	/**
@@ -33,8 +24,8 @@ final class Expire_User_Passwords_Login_Screen {
 	 *
 	 * @action wp_login
 	 *
-	 * @param string   $user_login User login.
-	 * @param \WP_User $user       User object.
+	 * @param string   $user_login
+	 * @param \WP_User $user
 	 */
 	public function wp_login( $user_login, $user ) {
 
@@ -50,8 +41,7 @@ final class Expire_User_Passwords_Login_Screen {
 
 		}
 
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Required by wp_destroy_all_sessions().
-		$GLOBALS['current_user'] = $user;
+		$GLOBALS['current_user'] = $user; // Required to destroy sessions
 
 		wp_destroy_all_sessions();
 
@@ -94,8 +84,8 @@ final class Expire_User_Passwords_Login_Screen {
 	 *
 	 * @action validate_password_reset
 	 *
-	 * @param \WP_Error $errors Error object.
-	 * @param \WP_User  $user   User object.
+	 * @param \WP_Error $errors
+	 * @param \WP_User  $user
 	 */
 	public function validate_password_reset( $errors, $user ) {
 
@@ -130,7 +120,7 @@ final class Expire_User_Passwords_Login_Screen {
 	 *
 	 * @filter login_message
 	 *
-	 * @param  string $message Current login message.
+	 * @param  string $message
 	 *
 	 * @return string
 	 */
@@ -157,7 +147,7 @@ final class Expire_User_Passwords_Login_Screen {
 		);
 
 		if ( 'lostpassword' !== $action || 'expired' !== $status ) {
-			if ( 'eup' === $fp ) {
+			if ( $fp == 'eup' ) {
 				return $eup_message;
 			}
 

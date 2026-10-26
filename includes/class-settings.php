@@ -1,10 +1,4 @@
 <?php
-/**
- * Settings page for Expire User Passwords.
- *
- * @package Expire-User-Passwords
- */
-
 namespace MillerMedia\ExpireUserPasswords;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,9 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 }
 
-/**
- * Settings page handler.
- */
 final class Expire_User_Passwords_Settings {
 
 	/**
@@ -56,7 +47,7 @@ final class Expire_User_Passwords_Settings {
 	 * @return string[]
 	 */
 	public function plugin_link( array $actions, string $plugin_file ): array {
-		if ( EXPIRE_USER_PASSWORDS_PLUGIN !== $plugin_file ) {
+		if ( $plugin_file !== EXPIRE_USER_PASSWORDS_PLUGIN ) {
 			return $actions; // wrong plugin.
 		}
 

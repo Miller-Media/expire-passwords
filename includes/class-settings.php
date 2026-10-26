@@ -298,20 +298,35 @@ final class Expire_User_Passwords_Settings {
 
 		check_admin_referer( 'user_expass_force_reset_all' );
 
-		$roles = Expire_User_Passwords::get_roles();
-		$count = 0;
+		/**
+		 * Filter how many users are processed per request when forcing
+		 * a password reset for every user in the selected roles.
+		 *
+		 * @param int $batch_size
+		 */
+		$batch_size = max( 1, absint( apply_filters( 'user_expass_force_reset_batch_size', 50 ) ) );
+		$paged      = isset( $_POST['paged'] ) ? max( 1, absint( $_POST['paged'] ) ) : 1;
+		$count      = isset( $_POST['count'] ) ? absint( $_POST['count'] ) : 0;
+		$roles      = Expire_User_Passwords::get_roles();
+		$has_more   = false;
 
 		// An empty role__in would match every user, so only query when roles are set.
 		if ( $roles ) {
 
-			$user_ids = get_users(
+			// Skip the current user so the admin doesn't sign themselves out.
+			$query = new \WP_User_Query(
 				array(
 					'role__in' => $roles,
+					'exclude'  => array( get_current_user_id() ),
 					'fields'   => 'ID',
+					'orderby'  => 'ID',
+					'order'    => 'ASC',
+					'number'   => $batch_size,
+					'paged'    => $paged,
 				)
 			);
 
-			foreach ( $user_ids as $user_id ) {
+			foreach ( $query->get_results() as $user_id ) {
 
 				if ( Expire_User_Passwords::force_password_reset( (int) $user_id ) ) {
 
@@ -319,6 +334,15 @@ final class Expire_User_Passwords_Settings {
 
 				}
 			}
+
+			// Forced users keep their roles, so the paged result set stays stable between batches.
+			$has_more = $query->get_total() > $paged * $batch_size;
+		}
+
+		if ( $has_more ) {
+
+			$this->continue_force_reset_all( $paged + 1, $count );
+
 		}
 
 		wp_safe_redirect(
@@ -331,6 +355,47 @@ final class Expire_User_Passwords_Settings {
 			)
 		);
 		exit;
+	}
+
+	/**
+	 * Print a self-submitting form that POSTs the next batch of a
+	 * "Force Password Reset Now" run, so large sites don't time out.
+	 *
+	 * @param int $paged The batch to process next.
+	 * @param int $count The number of users reset so far.
+	 */
+	private function continue_force_reset_all( $paged, $count ) {
+
+		ob_start();
+
+		?>
+		<p>
+			<?php
+			echo esc_html(
+				sprintf(
+					/* translators: %d: number of users */
+					_n(
+						'A password reset has been forced for %d user so far. Continuing&hellip;',
+						'A password reset has been forced for %d users so far. Continuing&hellip;',
+						$count,
+						'expire-user-passwords'
+					),
+					$count
+				)
+			);
+			?>
+		</p>
+		<form id="user-expass-force-reset-all-form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+			<input type="hidden" name="action" value="user_expass_force_reset_all">
+			<input type="hidden" name="paged" value="<?php echo absint( $paged ); ?>">
+			<input type="hidden" name="count" value="<?php echo absint( $count ); ?>">
+			<?php wp_nonce_field( 'user_expass_force_reset_all' ); ?>
+			<noscript><button type="submit" class="button button-primary"><?php esc_html_e( 'Continue', 'expire-user-passwords' ); ?></button></noscript>
+		</form>
+		<script>document.getElementById( 'user-expass-force-reset-all-form' ).submit();</script>
+		<?php
+
+		wp_die( ob_get_clean(), esc_html__( 'Force Password Reset', 'expire-user-passwords' ), array( 'response' => 200 ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- markup is escaped above.
 	}
 
 	/**

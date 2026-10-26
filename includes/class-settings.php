@@ -123,6 +123,23 @@ final class Expire_User_Passwords_Settings {
 			'user_expass_settings_page',
 			'user_expass_settings_page_section'
 		);
+
+		add_settings_field(
+			'user_expass_settings_field_start_date',
+			esc_html__( 'Start enforcing from date', 'expire-user-passwords' ),
+			array( $this, 'render_field_start_date' ),
+			'user_expass_settings_page',
+			'user_expass_settings_page_section'
+		);
+
+		add_settings_field(
+			'user_expass_settings_field_apply_to_all',
+			esc_html__( 'Apply start date to all users', 'expire-user-passwords' ),
+			array( $this, 'render_field_apply_to_all' ),
+			'user_expass_settings_page',
+			'user_expass_settings_page_section'
+		);
+
 		add_settings_field(
 			'user_expass_settings_field_email',
 			esc_html__( 'Reset via email', 'expire-user-passwords' ),
@@ -159,6 +176,15 @@ final class Expire_User_Passwords_Settings {
 		}
 		if ( isset( $input['delete_data_on_uninstall'] ) ) {
 			$sanitized['delete_data_on_uninstall'] = absint( $input['delete_data_on_uninstall'] );
+		}
+		if ( isset( $input['start_date'] ) ) {
+			$date = sanitize_text_field( $input['start_date'] );
+			if ( ! empty( $date ) && strtotime( $date ) ) {
+				$sanitized['start_date'] = $date;
+			}
+		}
+		if ( isset( $input['apply_start_date_to_all'] ) ) {
+			$sanitized['apply_start_date_to_all'] = absint( $input['apply_start_date_to_all'] );
 		}
 		return $sanitized;
 	}
@@ -253,6 +279,34 @@ final class Expire_User_Passwords_Settings {
 			'<p><label><input type="checkbox" name="user_expass_settings[delete_data_on_uninstall]" value="1" %s> %s</label></p>',
 			checked( $delete_data, 1, false ),
 			esc_html__( 'Check this box if you want all plugin settings and data to be removed when the plugin is deleted.', 'expire-user-passwords' )
+		);
+	}
+
+	/**
+	 * Content for the start date setting field.
+	 */
+	public function render_field_start_date() {
+		$options    = (array) get_option( 'user_expass_settings', array() );
+		$start_date = isset( $options['start_date'] ) ? $options['start_date'] : '';
+
+		printf(
+			'<input type="date" name="user_expass_settings[start_date]" value="%s">',
+			esc_attr( $start_date )
+		);
+		echo '<p class="description">' . esc_html__( 'Set a start date from which password age is calculated for users who have never reset their password.', 'expire-user-passwords' ) . '</p>';
+	}
+
+	/**
+	 * Content for the apply to all setting field.
+	 */
+	public function render_field_apply_to_all() {
+		$options      = (array) get_option( 'user_expass_settings', array() );
+		$apply_to_all = ! empty( $options['apply_start_date_to_all'] ) ? 1 : 0;
+
+		printf(
+			'<p><label><input type="checkbox" name="user_expass_settings[apply_start_date_to_all]" value="1" %s> %s</label></p>',
+			checked( $apply_to_all, 1, false ),
+			esc_html__( 'Apply the start date to all users, not just those who have never reset their password. Users who reset their password after the start date are measured from their own reset.', 'expire-user-passwords' )
 		);
 	}
 }

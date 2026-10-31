@@ -1,5 +1,6 @@
 === Expire User Passwords ===
 Contributors:      fjarrett, millermedianow, millermediadev
+Donate link:       https://www.buymeacoffee.com/yOd1JU9MQe
 Tags: password-expiry, security, passwords, login, users
 Requires at least: 4.4
 Tested up to:      7.1
@@ -76,6 +77,8 @@ In the plugin settings you can set the maximum number of days users are allowed 
 * Welsh (Cymraeg)
 
 **Development of this plugin is done [on GitHub](https://github.com/Miller-Media/expire-passwords). Pull requests welcome. Please see [issues reported](https://github.com/Miller-Media/expire-passwords/issues) there before going to the plugin forum.**
+
+If this plugin helps you, you can support its development at https://www.buymeacoffee.com/yOd1JU9MQe
 
 == Frequently Asked Questions ==
 

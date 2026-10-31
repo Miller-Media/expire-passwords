@@ -16,6 +16,8 @@ final class Expire_User_Passwords_Settings {
 
 		add_action( 'admin_menu', array( $this, 'submenu_page' ) );
 		add_action( 'admin_init', array( $this, 'init' ) );
+		add_action( 'admin_post_user_expass_force_reset_all', array( $this, 'handle_force_reset_all' ) );
+		add_action( 'admin_notices', array( $this, 'force_reset_notice' ) );
 		add_filter( 'plugin_action_links', array( $this, 'plugin_link' ), 10, 2 );
 	}
 
@@ -81,6 +83,25 @@ final class Expire_User_Passwords_Settings {
 
 				?>
 			</form>
+
+			<?php if ( current_user_can( 'manage_options' ) ) : ?>
+
+				<h2><?php esc_html_e( 'Force Password Reset', 'expire-user-passwords' ); ?></h2>
+
+				<p><?php esc_html_e( 'Sign out every user in the selected roles and require them to choose a new password on their next login.', 'expire-user-passwords' ); ?></p>
+
+				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" onsubmit="return confirm( '<?php echo esc_js( __( 'Are you sure you want to force every user in the selected roles to reset their password?', 'expire-user-passwords' ) ); ?>' );">
+					<input type="hidden" name="action" value="user_expass_force_reset_all">
+					<?php
+
+					wp_nonce_field( 'user_expass_force_reset_all' );
+
+					submit_button( __( 'Force Password Reset Now', 'expire-user-passwords' ), 'secondary', 'submit', false );
+
+					?>
+				</form>
+
+			<?php endif; ?>
 
 		</div>
 		<?php
@@ -253,6 +274,159 @@ final class Expire_User_Passwords_Settings {
 			'<p><label><input type="checkbox" name="user_expass_settings[delete_data_on_uninstall]" value="1" %s> %s</label></p>',
 			checked( $delete_data, 1, false ),
 			esc_html__( 'Check this box if you want all plugin settings and data to be removed when the plugin is deleted.', 'expire-user-passwords' )
+		);
+	}
+
+	/**
+	 * Force a password reset for every user in an expirable role.
+	 *
+	 * @action admin_post_user_expass_force_reset_all
+	 */
+	public function handle_force_reset_all() {
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+
+			wp_die( esc_html__( 'You do not have permission to perform this action.', 'expire-user-passwords' ), 403 );
+
+		}
+
+		if ( ! isset( $_SERVER['REQUEST_METHOD'] ) || 'POST' !== $_SERVER['REQUEST_METHOD'] ) {
+
+			wp_die( esc_html__( 'Invalid request.', 'expire-user-passwords' ), 405 );
+
+		}
+
+		check_admin_referer( 'user_expass_force_reset_all' );
+
+		/**
+		 * Filter how many users are processed per request when forcing
+		 * a password reset for every user in the selected roles.
+		 *
+		 * @param int $batch_size
+		 */
+		$batch_size = max( 1, absint( apply_filters( 'user_expass_force_reset_batch_size', 50 ) ) );
+		$paged      = isset( $_POST['paged'] ) ? max( 1, absint( $_POST['paged'] ) ) : 1;
+		$count      = isset( $_POST['count'] ) ? absint( $_POST['count'] ) : 0;
+		$roles      = Expire_User_Passwords::get_roles();
+		$has_more   = false;
+
+		// An empty role__in would match every user, so only query when roles are set.
+		if ( $roles ) {
+
+			// Skip the current user so the admin doesn't sign themselves out.
+			$query = new \WP_User_Query(
+				array(
+					'role__in' => $roles,
+					'exclude'  => array( get_current_user_id() ),
+					'fields'   => 'ID',
+					'orderby'  => 'ID',
+					'order'    => 'ASC',
+					'number'   => $batch_size,
+					'paged'    => $paged,
+				)
+			);
+
+			foreach ( $query->get_results() as $user_id ) {
+
+				if ( Expire_User_Passwords::force_password_reset( (int) $user_id ) ) {
+
+					++$count;
+
+				}
+			}
+
+			// Forced users keep their roles, so the paged result set stays stable between batches.
+			$has_more = $query->get_total() > $paged * $batch_size;
+		}
+
+		if ( $has_more ) {
+
+			$this->continue_force_reset_all( $paged + 1, $count );
+
+		}
+
+		wp_safe_redirect(
+			add_query_arg(
+				array(
+					'page'                    => 'Expire_User_passwords',
+					'user_expass_force_reset' => $count,
+				),
+				admin_url( 'users.php' )
+			)
+		);
+		exit;
+	}
+
+	/**
+	 * Print a self-submitting form that POSTs the next batch of a
+	 * "Force Password Reset Now" run, so large sites don't time out.
+	 *
+	 * @param int $paged The batch to process next.
+	 * @param int $count The number of users reset so far.
+	 */
+	private function continue_force_reset_all( $paged, $count ) {
+
+		ob_start();
+
+		?>
+		<p>
+			<?php
+			echo esc_html(
+				sprintf(
+					/* translators: %d: number of users */
+					_n(
+						'A password reset has been forced for %d user so far. Continuing&hellip;',
+						'A password reset has been forced for %d users so far. Continuing&hellip;',
+						$count,
+						'expire-user-passwords'
+					),
+					$count
+				)
+			);
+			?>
+		</p>
+		<form id="user-expass-force-reset-all-form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+			<input type="hidden" name="action" value="user_expass_force_reset_all">
+			<input type="hidden" name="paged" value="<?php echo absint( $paged ); ?>">
+			<input type="hidden" name="count" value="<?php echo absint( $count ); ?>">
+			<?php wp_nonce_field( 'user_expass_force_reset_all' ); ?>
+			<noscript><button type="submit" class="button button-primary"><?php esc_html_e( 'Continue', 'expire-user-passwords' ); ?></button></noscript>
+		</form>
+		<script>document.getElementById( 'user-expass-force-reset-all-form' ).submit();</script>
+		<?php
+
+		wp_die( ob_get_clean(), esc_html__( 'Force Password Reset', 'expire-user-passwords' ), array( 'response' => 200 ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- markup is escaped above.
+	}
+
+	/**
+	 * Show a notice after a forced password reset.
+	 *
+	 * @action admin_notices
+	 */
+	public function force_reset_notice() {
+
+		if ( ! isset( $_GET['user_expass_force_reset'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only display parameter, no state change.
+
+			return;
+
+		}
+
+		$count = absint( $_GET['user_expass_force_reset'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only display parameter, no state change.
+
+		printf(
+			'<div class="notice notice-success is-dismissible"><p>%s</p></div>',
+			esc_html(
+				sprintf(
+					/* translators: %d: number of users */
+					_n(
+						'A password reset has been forced for %d user.',
+						'A password reset has been forced for %d users.',
+						$count,
+						'expire-user-passwords'
+					),
+					$count
+				)
+			)
 		);
 	}
 }

@@ -234,6 +234,49 @@ final class Expire_User_Passwords {
 	}
 
 	/**
+	 * Return the effective reset date for a user.
+	 *
+	 * Factors in the Start Date setting, so password age is measured
+	 * from the Start Date for users who have never reset their password
+	 * and, when "Apply to all" is enabled, for users who last reset
+	 * before the Start Date.
+	 *
+	 * @param  mixed $user (optional)
+	 *
+	 * @return int|false
+	 */
+	public static function get_effective_reset_date( $user = null ) {
+
+		if ( false === ( $user_id = self::get_user_id( $user ) ) ) {
+
+			return false;
+
+		}
+
+		$options    = (array) get_option( 'user_expass_settings', array() );
+		$start_date = ! empty( $options['start_date'] ) ? $options['start_date'] : '';
+		$reset      = self::get_user_meta( $user_id );
+
+		if ( empty( $start_date ) ) {
+
+			return $reset;
+
+		}
+
+		$start = strtotime( $start_date );
+
+		if ( ! $reset ) {
+
+			return $start;
+
+		}
+
+		// Only use the Start Date when it is later than the user's own reset,
+		// so users who reset after the Start Date are measured from that reset.
+		return empty( $options['apply_start_date_to_all'] ) ? $reset : max( $reset, $start );
+	}
+
+	/**
 	 * Return the password expiration date for a user.
 	 *
 	 * @param  mixed  $user        (optional)
@@ -246,7 +289,7 @@ final class Expire_User_Passwords {
 		if (
 			! self::has_expirable_role( $user )
 			||
-			false === ( $reset = self::get_user_meta( $user ) )
+			false === ( $reset = self::get_effective_reset_date( $user ) )
 		) {
 
 			return false;

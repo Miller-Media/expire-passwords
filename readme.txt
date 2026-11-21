@@ -4,7 +4,7 @@ Donate link:       https://www.buymeacoffee.com/yOd1JU9MQe?utm_source=wordpress.
 Tags: password-expiry, security, passwords, login, users
 Requires at least: 4.4
 Tested up to:      7.1
-Stable tag: 1.4.3
+Stable tag: 1.4.4
 Requires PHP:      8.1
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -121,6 +121,10 @@ The plugin is available in 50 languages!
 3. Users are not permitted to use the same password two times in a row during reset.
 
 == Changelog ==
+
+= 1.4.4 =
+* Removed the "Tested up to" field from the plugin file header so it appears only in readme.txt, as required by Plugin Check
+* Added a donate link for supporting plugin development
 
 = 1.4.3 =
 * Fixed: administrators are now excluded from password expiration by default when no roles have been saved in the settings, as intended

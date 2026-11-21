@@ -11,7 +11,6 @@
  * Domain Path: /languages
  * Requires at least: 4.4
  * Requires PHP: 8.1
- * Tested up to: 7.1
  *
  * This plugin, like WordPress, is licensed under the GPL.
  * Use it to make something cool, have fun, and share what you've learned with others.

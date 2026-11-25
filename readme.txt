@@ -3,7 +3,7 @@ Contributors:      fjarrett, millermedianow, millermediadev
 Donate link:       https://www.buymeacoffee.com/yOd1JU9MQe?utm_source=wordpress.org&utm_medium=plugin-readme&utm_campaign=expire-user-passwords&utm_content=donate-header
 Tags: password-expiry, security, passwords, login, users
 Requires at least: 4.4
-Tested up to:      7.1
+Tested up to:      7.2
 Stable tag: 1.4.4
 Requires PHP:      8.1
 License:           GPL-2.0-or-later
